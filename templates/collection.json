@@ -1,0 +1,14 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-collection",
+      "settings": {
+        "eyebrow": "drop:one · live",
+        "meta_a": "ai-crafted",
+        "meta_b": "shipping global",
+        "feature_every": 5
+      }
+    }
+  },
+  "order": ["main"]
+}

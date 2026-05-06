@@ -1,0 +1,199 @@
+{%- liquid
+  assign feature_every = section.settings.feature_every | default: 5
+  paginate collection.products by 24
+-%}
+
+<header class="shop-head">
+  <span class="shop-eyebrow sfx-chip" data-reveal>
+    <span class="sfx-pulse-dot"></span> {{ section.settings.eyebrow | default: 'drop:one · live' }}
+  </span>
+  <h1 class="shop-title sfx-reveal" data-reveal>
+    {{ collection.title | default: 'collection' | downcase }}
+  </h1>
+  <div class="shop-meta sfx-reveal" data-reveal style="transition-delay: 120ms">
+    <span>{{ collection.products_count }} pieces</span>
+    <span class="dot-sep"></span>
+    <span>{{ section.settings.meta_a | default: 'ai-crafted' }}</span>
+    <span class="dot-sep"></span>
+    <span>{{ section.settings.meta_b | default: 'shipping global' }}</span>
+  </div>
+  <div class="sfx-rule" data-reveal style="margin-top: 28px"></div>
+</header>
+
+<div class="filter-bar">
+  <div class="fb-left">
+    <div class="seg">
+      <button type="button" class="seg-btn is-active" data-view="product">{{ 'collections.general.view_product' | t }}</button>
+      <span class="seg-arrow">⇌</span>
+      <button type="button" class="seg-btn" data-view="look">{{ 'collections.general.view_look' | t }}</button>
+    </div>
+  </div>
+  <div class="fb-right">
+    <button type="button" class="fb-action" data-open="filter">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.2" aria-hidden="true">
+        <line x1="2" y1="4" x2="12" y2="4"></line>
+        <circle cx="5" cy="4" r="1.6" fill="#fff"></circle>
+        <line x1="2" y1="10" x2="12" y2="10"></line>
+        <circle cx="9" cy="10" r="1.6" fill="#fff"></circle>
+      </svg>
+      <span>{{ 'collections.general.filter' | t }}</span>
+    </button>
+  </div>
+</div>
+
+<section class="shop-stream" data-view="product">
+  {%- if collection.products.size == 0 -%}
+    <div class="shop-row">
+      {%- for i in (1..4) -%}
+        <div class="sfx-reveal" data-reveal>
+          {% render 'product-card', product: nil, placeholder_label: 'product · placeholder' %}
+        </div>
+      {%- endfor -%}
+    </div>
+  {%- else -%}
+    {%- assign row_buf = '' -%}
+    {%- assign row_count = 0 -%}
+    {%- assign feat_index = 0 -%}
+    {%- for product in collection.products -%}
+      {%- assign one_based = forloop.index -%}
+      {%- assign mod = one_based | modulo: feature_every -%}
+      {%- if mod == 0 -%}
+        {%- comment -%} Flush current row, then render feature {%- endcomment -%}
+        {%- if row_count > 0 -%}
+          <div class="shop-row">
+            {{ row_buf }}
+            {%- assign pad = 4 | minus: row_count -%}
+            {%- for i in (1..pad) -%}
+              {%- if pad > 0 and i <= pad -%}<div class="shop-row-pad" aria-hidden="true"></div>{%- endif -%}
+            {%- endfor -%}
+          </div>
+          {%- assign row_buf = '' -%}
+          {%- assign row_count = 0 -%}
+        {%- endif -%}
+        {% render 'feature-section', product: product, index: feat_index %}
+        {%- assign feat_index = feat_index | plus: 1 -%}
+      {%- else -%}
+        {%- capture card -%}
+          <div class="sfx-reveal" data-reveal>
+            {%- assign idx = row_count -%}
+            {% render 'shop-card', product: product, index: idx %}
+          </div>
+        {%- endcapture -%}
+        {%- assign row_buf = row_buf | append: card -%}
+        {%- assign row_count = row_count | plus: 1 -%}
+        {%- if row_count == 4 -%}
+          <div class="shop-row">
+            {{ row_buf }}
+          </div>
+          {%- assign row_buf = '' -%}
+          {%- assign row_count = 0 -%}
+        {%- endif -%}
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if row_count > 0 -%}
+      <div class="shop-row">
+        {{ row_buf }}
+        {%- assign pad = 4 | minus: row_count -%}
+        {%- for i in (1..pad) -%}
+          {%- if pad > 0 -%}<div class="shop-row-pad" aria-hidden="true"></div>{%- endif -%}
+        {%- endfor -%}
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+</section>
+
+{%- if paginate.pages > 1 -%}
+  <nav class="pagination" role="navigation">
+    {%- if paginate.previous -%}<a href="{{ paginate.previous.url }}">←</a>{%- endif -%}
+    {%- for part in paginate.parts -%}
+      {%- if part.is_link -%}
+        <a href="{{ part.url }}">{{ part.title }}</a>
+      {%- else -%}
+        <span class="{% if part.title == paginate.current_page %}active{% endif %}">{{ part.title }}</span>
+      {%- endif -%}
+    {%- endfor -%}
+    {%- if paginate.next -%}<a href="{{ paginate.next.url }}">→</a>{%- endif -%}
+  </nav>
+{%- endif -%}
+
+<section class="shop-colophon">
+  <div class="kamis-mark" aria-label="{{ shop.name }}">
+    {%- assign mark = settings.wordmark | default: 'kamis:studio' -%}
+    {%- if mark contains ':' -%}
+      {%- assign parts = mark | split: ':' -%}
+      <span>{{ parts[0] }}</span><span class="wm-colon">:</span><span>{{ parts[1] }}</span>
+    {%- else -%}
+      <span>{{ mark }}</span>
+    {%- endif -%}
+    <div class="muted small" style="margin-top: 8px">drop:one · spring:summer '26</div>
+  </div>
+</section>
+
+{%- comment -%} Filter drawer {%- endcomment -%}
+<div data-filter-drawer-tmpl style="display:none">
+  <aside class="drawer" onclick="event.stopPropagation()">
+    <header class="drawer-h">
+      <span>{{ 'collections.general.filter' | t }}</span>
+      <button type="button" data-close aria-label="close">×</button>
+    </header>
+    <div class="drawer-body">
+      <div>
+        <h5 class="filter-h">sort by</h5>
+        <ul class="filter-list">
+          {%- assign sorts = 'manual,best-selling,title-ascending,price-ascending,price-descending,created-descending' | split: ',' -%}
+          {%- assign sort_labels = 'drop order,best sellers,name,price · low → high,price · high → low,newest' | split: ',' -%}
+          {%- for s in sorts -%}
+            <li>
+              <label>
+                <input type="radio" name="sort_by" value="{{ s }}" {% if collection.sort_by == s or collection.default_sort_by == s and collection.sort_by == blank %}checked{% endif %}>
+                {{ sort_labels[forloop.index0] }}
+              </label>
+            </li>
+          {%- endfor -%}
+        </ul>
+      </div>
+      <div>
+        <h5 class="filter-h">size</h5>
+        <div class="filter-sizes">
+          {%- assign sizes = 'XS,S,M,L,XL,XXL' | split: ',' -%}
+          {%- for s in sizes -%}
+            <button type="button" class="filter-size">{{ s }}</button>
+          {%- endfor -%}
+        </div>
+      </div>
+    </div>
+    <div class="drawer-foot">
+      <button type="button" class="btn-outline dark" data-close>clear</button>
+      <button type="button" class="btn-fill" data-close>apply</button>
+    </div>
+  </aside>
+</div>
+<script>
+  (function(){
+    var src = document.querySelector('[data-filter-drawer-tmpl] aside');
+    var slot = document.querySelector('#drawer-host [data-drawer="filter"]');
+    if (src && slot) slot.appendChild(src.cloneNode(true));
+    document.addEventListener('change', function(e){
+      var r = e.target.closest('input[name="sort_by"]');
+      if (!r) return;
+      var url = new URL(window.location);
+      url.searchParams.set('sort_by', r.value);
+      window.location = url;
+    });
+  })();
+</script>
+
+{% endpaginate %}
+
+{% schema %}
+{
+  "name": "Collection",
+  "settings": [
+    { "type": "text",  "id": "eyebrow",       "label": "Eyebrow",       "default": "drop:one · live" },
+    { "type": "text",  "id": "meta_a",        "label": "Meta A",        "default": "ai-crafted" },
+    { "type": "text",  "id": "meta_b",        "label": "Meta B",        "default": "shipping global" },
+    { "type": "range", "id": "feature_every", "label": "Feature every Nth product", "min": 4, "max": 10, "step": 1, "default": 5,
+      "info": "Every Nth product is rendered as a full-bleed editorial feature." }
+  ]
+}
+{% endschema %}

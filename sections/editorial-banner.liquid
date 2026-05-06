@@ -1,0 +1,65 @@
+{%- liquid
+  assign h = section.settings.height | default: '80vh'
+  assign palette = section.settings.palette | default: '#D9B07A,#A87D4C,#3A2C1B,#1A1410'
+  assign pos = section.settings.position | default: 'center'
+-%}
+<section class="banner" id="section-{{ section.id }}">
+  <div class="ph-video" style="height: {{ h }};">
+    {%- if section.settings.image != blank -%}
+      <img src="{{ section.settings.image | image_url: width: 2400 }}"
+           alt="{{ section.settings.heading | default: 'banner' | escape }}"
+           style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1"
+           loading="lazy">
+    {%- else -%}
+      <div class="ph-video-bg{% if section.settings.kenburns %} kb{% endif %}" style="background: linear-gradient(135deg, {{ palette }});"></div>
+    {%- endif -%}
+    <div class="ph-video-stripes"></div>
+    <div class="ph-video-grain"></div>
+    <div class="ph-video-vignette"></div>
+
+    <div class="ph-video-meta">
+      <span>[ {{ section.settings.label | default: 'banner · editorial' }} ]</span>
+      <span>{{ section.settings.sub | default: 'placeholder · 1920×1080' }}</span>
+    </div>
+
+    <div class="banner-center{% if pos == 'bottom' %} bottom{% endif %}">
+      {%- if section.settings.heading != blank -%}
+        <div class="banner-h">{{ section.settings.heading }}</div>
+      {%- endif -%}
+      {%- if section.settings.subheading != blank -%}
+        <div class="banner-sub">{{ section.settings.subheading }}</div>
+      {%- endif -%}
+      {%- if section.settings.button_text != blank -%}
+        <p style="margin-top:24px"><a class="btn-outline white" style="text-decoration:none" href="{{ section.settings.button_link | default: '#' }}">{{ section.settings.button_text }}</a></p>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Editorial banner",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image" },
+    { "type": "text", "id": "palette", "label": "Gradient palette (fallback)", "default": "#D9B07A,#A87D4C,#3A2C1B,#1A1410" },
+    { "type": "checkbox", "id": "kenburns", "label": "Animate gradient (Ken Burns)", "default": true },
+    { "type": "text", "id": "height", "label": "Height", "default": "80vh" },
+    { "type": "header", "content": "Caption" },
+    { "type": "text", "id": "label", "label": "Label", "default": "banner · the 2.0 hoodie" },
+    { "type": "text", "id": "sub",   "label": "Sub",   "default": "placeholder · close-crop hoodie reel · 1920×1080" },
+    { "type": "header", "content": "Headline" },
+    { "type": "text", "id": "heading",    "label": "Heading",    "default": "the 2.0 hoodie" },
+    { "type": "text", "id": "subheading", "label": "Subheading", "default": "three years of refinement · one perfect silhouette" },
+    { "type": "select", "id": "position", "label": "Headline position", "default": "center",
+      "options": [
+        { "value": "center", "label": "Center" },
+        { "value": "bottom", "label": "Bottom" }
+      ]
+    },
+    { "type": "header", "content": "CTA" },
+    { "type": "text", "id": "button_text", "label": "Button text" },
+    { "type": "url",  "id": "button_link", "label": "Button link" }
+  ],
+  "presets": [{ "name": "Editorial banner" }]
+}
+{% endschema %}

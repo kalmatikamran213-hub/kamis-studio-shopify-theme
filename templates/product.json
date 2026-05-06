@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-product",
+      "settings": {}
+    },
+    "shop-the-look": {
+      "type": "shop-the-look",
+      "settings": {
+        "heading": "shop the look",
+        "source": "auto"
+      }
+    }
+  },
+  "order": ["main", "shop-the-look"]
+}

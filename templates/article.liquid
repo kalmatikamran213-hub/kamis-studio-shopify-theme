@@ -1,0 +1,8 @@
+<div class="shop-root" style="padding: calc(32px + 56px + 48px) var(--pad-x) 80px; max-width: 720px; margin: 0 auto;">
+  <div class="muted small">{{ article.published_at | date: "%b %d, %Y" }} · {{ blog.title | downcase }}</div>
+  <h1 style="font-size: clamp(28px, 3vw, 44px); font-weight: 600; letter-spacing: -0.03em; margin: 16px 0 24px;">{{ article.title | downcase }}</h1>
+  {%- if article.image -%}
+    <img src="{{ article.image | image_url: width: 1400 }}" alt="{{ article.title | escape }}" style="width:100%; aspect-ratio: 16/9; object-fit: cover; background: var(--card); margin: 0 0 32px;">
+  {%- endif -%}
+  <div style="font-size: 16px; line-height: 1.7; color: var(--fg);">{{ article.content }}</div>
+</div>

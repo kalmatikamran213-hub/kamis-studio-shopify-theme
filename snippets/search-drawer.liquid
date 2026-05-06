@@ -1,0 +1,41 @@
+{%- comment -%} Search drawer (predictive) {%- endcomment -%}
+<template id="tmpl-search-drawer">
+  <aside class="drawer search" data-drawer-shell onclick="event.stopPropagation()">
+    <header class="drawer-h">
+      <span>search</span>
+      <button data-close aria-label="close">×</button>
+    </header>
+    <div class="drawer-body">
+      <form action="{{ routes.search_url }}" method="get">
+        <input class="search-input" name="q" data-search-input
+               placeholder="{{ 'general.search.placeholder' | t }}" autocomplete="off">
+      </form>
+      <div data-search-results class="search-results"></div>
+      <div class="search-cats">
+        <span class="muted small">{{ 'general.search.popular' | t }}</span>
+        <ul>
+          {%- for link in linklists['popular-search'].links -%}
+            <li><a href="{{ link.url }}" style="text-decoration:none;color:inherit">{{ link.title | downcase }}</a></li>
+          {%- else -%}
+            <li>varsity jacket</li>
+            <li>monogram cap</li>
+            <li>2.0 hoodie</li>
+            <li>wide leg trouser</li>
+            <li>denim script shirt</li>
+          {%- endfor -%}
+        </ul>
+      </div>
+    </div>
+  </aside>
+</template>
+
+<script>
+  (function(){
+    var host = document.getElementById('drawer-host');
+    if (!host) return;
+    var slot = host.querySelector('[data-drawer="search"]');
+    if (!slot) return;
+    var tmpl = document.getElementById('tmpl-search-drawer');
+    if (tmpl) slot.appendChild(tmpl.content.cloneNode(true));
+  })();
+</script>

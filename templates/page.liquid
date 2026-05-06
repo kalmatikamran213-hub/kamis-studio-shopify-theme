@@ -1,0 +1,8 @@
+<div class="shop-root" style="padding: calc(32px + 56px + 48px) var(--pad-x) 80px; max-width: 720px; margin: 0 auto;">
+  {%- if page.title != blank -%}
+    <h1 style="font-size: clamp(22px, 2.4vw, 34px); font-weight: 500; letter-spacing: -0.025em; margin: 0 0 24px;">{{ page.title | downcase }}</h1>
+  {%- endif -%}
+  <div class="muted" style="font-size: 14px; line-height: 1.6;">
+    {{ page.content }}
+  </div>
+</div>

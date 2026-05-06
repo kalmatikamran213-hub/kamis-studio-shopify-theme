@@ -1,0 +1,119 @@
+{
+  "sections": {
+    "hero": {
+      "type": "hero",
+      "settings": {
+        "height": "78vh",
+        "label": "hero · drop:one campaign film",
+        "sub": "placeholder · drop campaign reel · 1920×1080 · loop",
+        "headline": "drop:one",
+        "subheadline": "spring:summer '26",
+        "card_text": "drop:one of spring:summer '26 now live for kamis | members",
+        "card_button_text": "see:more",
+        "show_marquee": true,
+        "marquee_text": "kamis:studio   ·   drop:one   ·   spring:summer '26   ·   ai-crafted visuals   ·  ",
+        "palette": "#A89177,#7A6852,#3F3429,#1F1A14"
+      }
+    },
+    "intro": {
+      "type": "intro",
+      "settings": {
+        "heading": "drop:one of spring:summer '26",
+        "body": "<p>the inaugural collection introduces a reversible varsity jacket, summer waffle tees, monogram caps, all-new tailored legwear, and the studio's first run of editorial-grade hoodies.</p>",
+        "button_text": "see:more"
+      }
+    },
+    "new-in": {
+      "type": "featured-collection",
+      "settings": {
+        "limit": 4,
+        "eyebrow": "new:in",
+        "eyebrow_meta": "drop:one · 14 pieces",
+        "placeholder_label": "product · new:in",
+        "placeholder_palette": "#EFEDE8,#EAE6DC,#E6E8EB,#F2EFE8"
+      }
+    },
+    "banner-hoodie": {
+      "type": "editorial-banner",
+      "settings": {
+        "label": "banner · the 2.0 hoodie",
+        "sub": "placeholder · close-crop hoodie reel · 1920×1080",
+        "heading": "the 2.0 hoodie",
+        "subheading": "three years of refinement · one perfect silhouette",
+        "position": "center",
+        "palette": "#D9B07A,#A87D4C,#3A2C1B,#1A1410"
+      }
+    },
+    "hoodies": {
+      "type": "featured-collection",
+      "settings": {
+        "limit": 4,
+        "button_text": "shop:now",
+        "placeholder_label": "product · hoodie",
+        "placeholder_palette": "#1D2433,#15161A,#C7544B,#F4EAD0"
+      }
+    },
+    "banner-legwear": {
+      "type": "editorial-banner",
+      "settings": {
+        "label": "banner · legwear film",
+        "sub": "placeholder · walking shot · concrete loop",
+        "heading": "legwear",
+        "subheading": "new fits for spring:summer '26",
+        "position": "bottom",
+        "palette": "#D9D2BC,#9F9876,#5C5638,#23211A"
+      }
+    },
+    "trousers": {
+      "type": "featured-collection",
+      "settings": {
+        "limit": 4,
+        "button_text": "shop:now",
+        "placeholder_label": "product · trouser",
+        "placeholder_palette": "#16171A,#EFEAD9,#5B5938,#C9C9C7"
+      }
+    },
+    "banner-headwear": {
+      "type": "editorial-banner",
+      "settings": {
+        "label": "editorial · bespoke headwear",
+        "sub": "placeholder · still image · 4×5",
+        "heading": "bespoke headwear",
+        "subheading": "best sellers for a reason",
+        "position": "bottom",
+        "kenburns": false,
+        "palette": "#3A4A3F,#22312A,#161D19,#0B100E"
+      }
+    },
+    "caps": {
+      "type": "featured-collection",
+      "settings": {
+        "limit": 4,
+        "button_text": "shop:now",
+        "placeholder_label": "product · cap",
+        "placeholder_palette": "#EFEAD9,#26392B,#D7D2C5,#9A9A98"
+      }
+    },
+    "colophon": {
+      "type": "colophon",
+      "settings": {
+        "eyebrow": "studio · note 001",
+        "heading": "every visual on this site is ai-crafted, art-directed, and human-finished by kamis studio.",
+        "body": "<p>we operate as a creative atelier for fashion and product brands. each campaign in this drop was rendered, retouched, and graded over a six-week production cycle — no physical samples, no shoot days, no waste.</p>",
+        "contact": "contact · studio@kamis.studio"
+      }
+    }
+  },
+  "order": [
+    "hero",
+    "intro",
+    "new-in",
+    "banner-hoodie",
+    "hoodies",
+    "banner-legwear",
+    "trousers",
+    "banner-headwear",
+    "caps",
+    "colophon"
+  ]
+}

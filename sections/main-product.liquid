@@ -1,0 +1,149 @@
+{%- liquid
+  assign current_variant = product.selected_or_first_available_variant
+  assign images = product.images | default: empty
+  if product.options_with_values
+    for opt in product.options_with_values
+      assign nm = opt.name | downcase
+      if nm contains 'color' or nm contains 'colour'
+        assign color_option = opt
+      elsif nm contains 'size' or opt.position == 1
+        assign size_option = size_option | default: opt
+      endif
+    endfor
+  endif
+-%}
+
+<div class="product-root" data-product data-require-size="{% if size_option %}true{% else %}false{% endif %}">
+
+  <div class="pdp">
+    <div class="pdp-left">
+      <button type="button" class="pdp-bookmark" aria-label="save"
+              onclick="this.classList.toggle('is-saved');var p=this.querySelector('path');if(p){p.setAttribute('fill', this.classList.contains('is-saved')?'#0A0A0A':'none')}">
+        {% render 'icon-bookmark' %}
+      </button>
+
+      {%- if images.size > 0 -%}
+        {%- for img in images limit: 6 -%}
+          <div class="pdp-img-wrap">
+            <img src="{{ img | image_url: width: 1200 }}" alt="{{ product.title | escape }} · {{ forloop.index }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+          </div>
+        {%- endfor -%}
+      {%- else -%}
+        {%- assign palette_bgs = 'EFEDE8,E6E8EB,EAE6DC,F2EFE8' | split: ',' -%}
+        {%- for i in (1..4) -%}
+          <div class="pdp-img-wrap">
+            {% render 'striped-placeholder', label: 'product · ' append: product.title, sub: 'image ' append: forloop.index, bg: '#' append: palette_bgs[forloop.index0], fg: '#D5D0C5', class: '' %}
+          </div>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+
+    <div class="pdp-right">
+      <div class="pdp-inner">
+        <div class="pdp-h">
+          <h1 class="pdp-name">{{ product.title | downcase }}</h1>
+          <div class="pdp-price" data-product-price>{{ current_variant.price | money }}</div>
+        </div>
+
+        {%- if color_option -%}
+          <div class="pdp-block">
+            <div class="pdp-swatches">
+              {%- for v in color_option.values -%}
+                {%- assign hex = v | downcase | handle -%}
+                <button type="button"
+                        class="pdp-swatch{% if v == current_variant.options[color_option.position | minus: 1] %} is-active{% endif %}"
+                        data-option="{{ v | escape }}"
+                        data-option-index="{{ color_option.position | minus: 1 }}"
+                        aria-label="{{ v | escape }}"
+                        style="background: {{ hex }};"></button>
+              {%- endfor -%}
+            </div>
+            <div class="pdp-color-name" data-color-name>{{ current_variant.options[color_option.position | minus: 1] | downcase }}</div>
+          </div>
+        {%- endif -%}
+
+        {%- if product.metafields.kamis.fit != blank -%}
+          <div class="pdp-fit">
+            <div>{{ product.metafields.kamis.fit }}</div>
+            {%- if product.metafields.kamis.size_guide_url != blank -%}
+              <a class="linklike size-guide" href="{{ product.metafields.kamis.size_guide_url }}">{{ 'products.product.size_guide' | t }}</a>
+            {%- endif -%}
+          </div>
+        {%- endif -%}
+
+        {%- if size_option -%}
+          <div class="pdp-sizes">
+            {%- for v in size_option.values -%}
+              {%- assign size_value = v -%}
+              {%- assign available = false -%}
+              {%- for variant in product.variants -%}
+                {%- assign opt_idx = size_option.position | minus: 1 -%}
+                {%- if variant.options[opt_idx] == size_value and variant.available -%}
+                  {%- assign available = true -%}
+                  {%- break -%}
+                {%- endif -%}
+              {%- endfor -%}
+              <button type="button"
+                      class="pdp-size{% if v == current_variant.options[size_option.position | minus: 1] %} is-active{% endif %}{% unless available %} is-out{% endunless %}"
+                      data-option="{{ v | escape }}"
+                      data-option-index="{{ size_option.position | minus: 1 }}"
+                      {% unless available %}disabled{% endunless %}>
+                {{ v }}
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        <form method="post" action="{{ routes.cart_add_url }}" id="product-form-{{ section.id }}" novalidate>
+          <input type="hidden" name="id" value="{{ current_variant.id }}">
+          <input type="hidden" name="quantity" value="1">
+          <button type="submit" class="{% if size_option %}btn-outline dark{% else %}btn-fill{% endif %} pdp-cta" data-add-to-cart>
+            {% if size_option %}{{ 'products.product.select_size' | t }}{% else %}{{ 'products.product.add_to_bag' | t }}{% endif %}
+          </button>
+        </form>
+
+        <p class="pdp-desc">{{ product.metafields.kamis.short_description | default: product.description | strip_html | truncate: 240 }}</p>
+
+        <div class="acc">
+          <div class="acc-row">
+            <button type="button" class="acc-h" aria-expanded="false">
+              <span class="acc-icon">+</span>
+              <span>{{ 'products.product.details' | t }}</span>
+            </button>
+            <div class="acc-body"><div class="acc-inner">{{ product.metafields.kamis.details | default: product.description }}</div></div>
+          </div>
+          <div class="acc-row">
+            <button type="button" class="acc-h" aria-expanded="false">
+              <span class="acc-icon">+</span>
+              <span>{{ 'products.product.size_and_fit' | t }}</span>
+            </button>
+            <div class="acc-body"><div class="acc-inner">{{ product.metafields.kamis.size_and_fit | default: 'true to size. model is 6&#39;1 / 1.86m and wears a medium.' }}</div></div>
+          </div>
+          <div class="acc-row">
+            <button type="button" class="acc-h" aria-expanded="false">
+              <span class="acc-icon">+</span>
+              <span>{{ 'products.product.shipping' | t }}</span>
+            </button>
+            <div class="acc-body"><div class="acc-inner">{{ product.metafields.kamis.shipping | default: 'orders dispatched within 3–5 working days. free delivery on orders over rs.25,000. returns accepted within 14 days.' }}</div></div>
+          </div>
+        </div>
+
+        <div class="pdp-foot muted small">
+          <span>art direction · {{ shop.name | downcase }}</span>
+          <span>made in limited quantity</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="application/json" data-product-json>
+    {{ product.variants | json }}
+  </script>
+</div>
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": []
+}
+{% endschema %}

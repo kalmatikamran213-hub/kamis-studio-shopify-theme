@@ -1,0 +1,25 @@
+{
+  "current": {
+    "bg_color": "#FFFFFF",
+    "fg_color": "#0A0A0A",
+    "muted_color": "#8A8A8A",
+    "rule_color": "#E6E6E6",
+    "card_color": "#F5F5F5",
+    "accent_color": "#7A1F22",
+    "wordmark_weight": 600,
+    "tagline": "drop:one of spring:summer '26",
+    "show_bag_fab": true
+  },
+  "presets": {
+    "Default": {
+      "bg_color": "#FFFFFF",
+      "fg_color": "#0A0A0A",
+      "muted_color": "#8A8A8A",
+      "rule_color": "#E6E6E6",
+      "card_color": "#F5F5F5",
+      "accent_color": "#7A1F22",
+      "wordmark_weight": 600,
+      "tagline": "drop:one of spring:summer '26"
+    }
+  }
+}

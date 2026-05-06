@@ -1,0 +1,27 @@
+<section class="intro">
+  {%- if section.settings.heading != blank -%}
+    <h2 class="intro-h sfx-reveal" data-reveal>{{ section.settings.heading }}</h2>
+  {%- endif -%}
+  {%- if section.settings.body != blank -%}
+    <p class="intro-p sfx-reveal" data-reveal style="transition-delay:120ms">{{ section.settings.body }}</p>
+  {%- endif -%}
+  {%- if section.settings.button_text != blank -%}
+    <div class="sfx-reveal" data-reveal style="transition-delay:220ms">
+      <a class="btn-outline dark" style="text-decoration:none" href="{{ section.settings.button_link | default: '#' }}">{{ section.settings.button_text }}</a>
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Intro",
+  "settings": [
+    { "type": "text",     "id": "heading",     "label": "Heading", "default": "drop:one of spring:summer '26" },
+    { "type": "richtext", "id": "body",        "label": "Body",
+      "default": "<p>the inaugural collection introduces a reversible varsity jacket, summer waffle tees, monogram caps, all-new tailored legwear, and the studio's first run of editorial-grade hoodies.</p>" },
+    { "type": "text",     "id": "button_text", "label": "Button text", "default": "see:more" },
+    { "type": "url",      "id": "button_link", "label": "Button link" }
+  ],
+  "presets": [{ "name": "Intro" }]
+}
+{% endschema %}

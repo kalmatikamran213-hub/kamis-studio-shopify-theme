@@ -1,0 +1,34 @@
+{%- comment -%} Mobile menu drawer (left-side) {%- endcomment -%}
+<template id="tmpl-menu-drawer">
+  <aside class="drawer menu" data-drawer-shell onclick="event.stopPropagation()">
+    <header class="drawer-h">
+      <span>menu</span>
+      <button data-close aria-label="close">×</button>
+    </header>
+    <div class="drawer-body">
+      <ul class="menu-list">
+        {%- for link in linklists.main-menu.links -%}
+          <li><a href="{{ link.url }}">{{ link.title | downcase }}</a></li>
+        {%- else -%}
+          <li><a href="/collections/all">shop</a></li>
+          <li><a href="/pages/brand">brand</a></li>
+          <li><a href="/collections/new-in">new:in</a></li>
+          <li><a href="/collections/drop-one">drop:one</a></li>
+          <li><a href="/pages/info">info</a></li>
+          <li><a href="/account">account</a></li>
+        {%- endfor -%}
+      </ul>
+    </div>
+  </aside>
+</template>
+
+<script>
+  (function(){
+    var host = document.getElementById('drawer-host');
+    if (!host) return;
+    var slot = host.querySelector('[data-drawer="menu"]');
+    if (!slot) return;
+    var tmpl = document.getElementById('tmpl-menu-drawer');
+    if (tmpl) slot.appendChild(tmpl.content.cloneNode(true));
+  })();
+</script>

@@ -1,0 +1,88 @@
+{%- comment -%}
+  Homepage / featured-collection product card.
+
+  Accepts:
+    product: a Shopify product object (or nil for placeholder)
+    placeholder_label: caption for the SVG fallback
+    placeholder_bg / placeholder_fg / placeholder_tint
+{%- endcomment -%}
+{%- liquid
+  assign first_image = product.featured_image
+  if product.images.size > 1
+    assign hover_image = product.images[1]
+  else
+    assign hover_image = first_image
+  endif
+-%}
+<article class="card" data-card{% if product %} onclick="if(!event.target.closest('button')){window.location='{{ product.url }}'}"{% endif %} style="cursor:{% if product %}pointer{% else %}default{% endif %}">
+  {%- if product.metafields.kamis.tag != blank -%}
+    <div class="card-tag">{{ product.metafields.kamis.tag }}</div>
+  {%- elsif product.tags.first -%}
+    <div class="card-tag">{{ product.tags.first }}</div>
+  {%- else -%}
+    <div class="card-tag">new:in</div>
+  {%- endif -%}
+
+  <button type="button" class="card-bookmark" aria-label="save" onclick="event.stopPropagation();this.classList.toggle('is-saved');var p=this.querySelector('path');if(p){p.setAttribute('fill', this.classList.contains('is-saved')?'#0A0A0A':'none')}">
+    {% render 'icon-bookmark' %}
+  </button>
+
+  {%- if product -%}
+    <a href="{{ product.url }}" class="card-img-wrap" aria-label="{{ product.title | escape }}" onclick="event.stopPropagation()">
+      {%- if first_image -%}
+        <img src="{{ first_image | image_url: width: 800 }}" alt="{{ product.title | escape }}" class="card-img product-image" loading="lazy" width="800" height="1000">
+      {%- else -%}
+        {% render 'striped-placeholder', label: 'product · ' append: product.title, sub: product.metafields.kamis.sub | default: 'flat', bg: placeholder_bg, fg: placeholder_fg, tint: placeholder_tint, class: 'card-img' %}
+      {%- endif -%}
+
+      {%- if hover_image and hover_image != first_image -%}
+        <img src="{{ hover_image | image_url: width: 800 }}" alt="" aria-hidden="true" class="card-img card-img-hover product-image" loading="lazy" width="800" height="1000">
+      {%- elsif product.metafields.kamis.look_image -%}
+        <img src="{{ product.metafields.kamis.look_image | image_url: width: 800 }}" alt="" aria-hidden="true" class="card-img card-img-hover product-image" loading="lazy">
+      {%- endif -%}
+
+      <form method="post" action="{{ routes.cart_add_url }}" style="margin:0">
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <input type="hidden" name="quantity" value="1">
+        <button type="submit" class="card-quick" data-add-to-cart onclick="event.stopPropagation()">+ quick add</button>
+      </form>
+    </a>
+  {%- else -%}
+    <div class="card-img-wrap">
+      {% render 'striped-placeholder', label: placeholder_label | default: 'product · placeholder', sub: 'add product in shopify admin', bg: placeholder_bg, fg: placeholder_fg, tint: placeholder_tint %}
+    </div>
+  {%- endif -%}
+
+  <div class="card-meta">
+    <div class="card-name-row">
+      <span class="card-name">{{ product.title | default: placeholder_label | default: 'placeholder' | downcase }}</span>
+      <span class="card-variant">{{ product.metafields.kamis.variant | default: product.options_with_values.first.values.first | default: '' | downcase }}</span>
+    </div>
+    <div class="card-price">{{ product.price | money }}</div>
+  </div>
+
+  {%- assign swatch_count = 0 -%}
+  {%- if product.options_with_values -%}
+    {%- for opt in product.options_with_values -%}
+      {%- if opt.name contains 'Color' or opt.name contains 'colour' or opt.name == 'Color' -%}
+        <div class="card-swatches">
+          {%- for v in opt.values limit: 5 -%}
+            <span class="sw" style="background:{{ v | downcase | handle }};"></span>
+            {%- assign swatch_count = swatch_count | plus: 1 -%}
+          {%- endfor -%}
+        </div>
+        {%- break -%}
+      {%- endif -%}
+    {%- endfor -%}
+  {%- endif -%}
+</article>
+
+<style>
+  .card-bookmark.is-saved svg path { fill: #0A0A0A !important; }
+  .card-img-wrap form .card-quick {
+    position: absolute;
+    left: 10px; right: 10px;
+    bottom: 10px;
+  }
+  .card:hover .card-quick { opacity: 1; transform: translateY(0); }
+</style>

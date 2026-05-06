@@ -1,0 +1,70 @@
+{%- comment -%}
+  Shop / collection page product card.
+
+  Accepts:
+    product: a Shopify product
+    index:   row index (used for stagger delay)
+{%- endcomment -%}
+{%- liquid
+  assign first_image = product.featured_image
+  if product.images.size > 1
+    assign hover_image = product.images[1]
+  else
+    assign hover_image = first_image
+  endif
+  assign look_image = product.metafields.kamis.look_image | default: hover_image
+  assign delay = index | default: 0 | times: 60
+-%}
+<article class="card shop-card sfx-reveal" data-reveal style="transition-delay:{{ delay }}ms">
+  {%- if product.metafields.kamis.tag != blank -%}
+    <div class="card-tag">{{ product.metafields.kamis.tag }}</div>
+  {%- elsif product.tags.first -%}
+    <div class="card-tag">{{ product.tags.first }}</div>
+  {%- else -%}
+    <div class="card-tag">new.in</div>
+  {%- endif -%}
+
+  <button type="button" class="card-bookmark" aria-label="save" onclick="event.preventDefault();event.stopPropagation();this.classList.toggle('is-saved');var p=this.querySelector('path');if(p){p.setAttribute('fill', this.classList.contains('is-saved')?'#0A0A0A':'none')}">
+    {% render 'icon-bookmark' %}
+  </button>
+
+  <a href="{{ product.url }}" class="card-img-wrap card-clicker sfx-img-wrap" data-parallax="18" aria-label="view {{ product.title | escape }}">
+    {%- if first_image -%}
+      <img
+        src="{{ first_image | image_url: width: 800 }}"
+        alt="{{ product.title | escape }}"
+        class="card-img sfx-img view-fade product-image"
+        data-card-img
+        data-product="{{ first_image | image_url: width: 800 }}"
+        data-look="{{ look_image | image_url: width: 800 }}"
+        loading="lazy"
+        width="800" height="1000">
+    {%- else -%}
+      {% render 'striped-placeholder', label: 'product · ' append: product.title, sub: 'flat', class: 'card-img sfx-img view-fade' %}
+    {%- endif -%}
+
+    {%- if hover_image and hover_image != first_image -%}
+      <img src="{{ hover_image | image_url: width: 800 }}" alt="" aria-hidden="true" class="card-img card-img-hover product-image" loading="lazy">
+    {%- endif -%}
+  </a>
+
+  <div class="card-meta">
+    <div class="card-name-row">
+      <span class="card-name">{{ product.title | downcase }}</span>
+      <span class="card-variant">{{ product.metafields.kamis.variant | default: product.options_with_values.first.values.first | default: '' | downcase }}</span>
+    </div>
+    <div class="card-price">{{ product.price | money }}</div>
+  </div>
+
+  {%- for opt in product.options_with_values -%}
+    {%- assign nm = opt.name | downcase -%}
+    {%- if nm contains 'color' or nm contains 'colour' -%}
+      <div class="card-swatches dots">
+        {%- for v in opt.values limit: 6 -%}
+          <span class="dot" style="background:{{ v | downcase | handle }};"></span>
+        {%- endfor -%}
+      </div>
+      {%- break -%}
+    {%- endif -%}
+  {%- endfor -%}
+</article>

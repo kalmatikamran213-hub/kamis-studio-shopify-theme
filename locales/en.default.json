@@ -1,0 +1,44 @@
+{
+  "general": {
+    "search": {
+      "placeholder": "search products, drops, materials…",
+      "popular": "popular"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_bag": "+ add to bag",
+      "select_size": "select size",
+      "sold_out": "sold out",
+      "size_guide": "↔ size guide",
+      "details": "details",
+      "size_and_fit": "size & fit",
+      "shipping": "shipping",
+      "view_product": "view product",
+      "shop_the_look": "shop the look"
+    }
+  },
+  "cart": {
+    "general": {
+      "title": "bag",
+      "empty": "your bag is empty.",
+      "subtotal": "subtotal",
+      "checkout": "checkout",
+      "remove": "remove",
+      "shipping_note": "shipping & taxes calculated at checkout."
+    }
+  },
+  "collections": {
+    "general": {
+      "filter": "filter + sort",
+      "view_product": "product",
+      "view_look": "look",
+      "no_products": "no products found"
+    }
+  },
+  "newsletter": {
+    "placeholder": "email for drop notifications",
+    "submit": "subscribe",
+    "success": "thanks — you're on the list."
+  }
+}

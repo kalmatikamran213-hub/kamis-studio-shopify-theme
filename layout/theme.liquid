@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="{{ settings.bg_color | default: '#FFFFFF' }}">
+  {%- if settings.favicon != blank -%}
+    <link rel="icon" type="image/png" href="{{ settings.favicon | image_url: width: 32, height: 32 }}">
+  {%- endif -%}
+
+  <title>
+    {%- if template == 'index' -%}
+      {{ shop.name }} — {{ shop.metafields.kamis.tagline | default: page_title }}
+    {%- else -%}
+      {{ page_title }}{% if current_tags %} – tagged {{ current_tags | join: ', ' }}{% endif %}{% if current_page != 1 %} – page {{ current_page }}{% endif %}{% unless page_title contains shop.name %} · {{ shop.name }}{% endunless %}
+    {%- endif -%}
+  </title>
+
+  {%- if page_description -%}
+    <meta name="description" content="{{ page_description | escape }}">
+  {%- endif -%}
+
+  <link rel="canonical" href="{{ canonical_url }}">
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+
+  <style>
+    :root {
+      --bg: {{ settings.bg_color | default: '#FFFFFF' }};
+      --fg: {{ settings.fg_color | default: '#0A0A0A' }};
+      --muted: {{ settings.muted_color | default: '#8A8A8A' }};
+      --accent: {{ settings.accent_color | default: '#7A1F22' }};
+      --rule: {{ settings.rule_color | default: '#E6E6E6' }};
+      --card: {{ settings.card_color | default: '#F5F5F5' }};
+    }
+  </style>
+
+  <script>
+    window.theme = {
+      moneyFormat: {{ shop.money_format | json }},
+      routes: {
+        cart: {{ routes.cart_url | json }},
+        cart_add: {{ routes.cart_add_url | json }},
+        cart_change: {{ routes.cart_change_url | json }},
+        search: {{ routes.search_url | json }}
+      }
+    };
+    window.Shopify = window.Shopify || {};
+    window.Shopify.formatMoney = function(cents, format) {
+      if (typeof cents === 'string') cents = cents.replace('.','');
+      var value = '';
+      var formatString = (format || '${{amount}}');
+      function defaultOption(opt, def) { return (typeof opt === 'undefined' ? def : opt); }
+      function formatWithDelimiters(number, precision, thousands, decimal) {
+        precision = defaultOption(precision, 2);
+        thousands = defaultOption(thousands, ',');
+        decimal = defaultOption(decimal, '.');
+        if (isNaN(number) || number == null) return 0;
+        number = (number/100.0).toFixed(precision);
+        var parts = number.split('.'),
+            dollars = parts[0].replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1' + thousands),
+            cents = parts[1] ? (decimal + parts[1]) : '';
+        return dollars + cents;
+      }
+      switch(formatString.match(/\{\{\s*(\w+)\s*\}\}/)[1]) {
+        case 'amount': value = formatWithDelimiters(cents, 2); break;
+        case 'amount_no_decimals': value = formatWithDelimiters(cents, 0); break;
+        case 'amount_with_comma_separator': value = formatWithDelimiters(cents, 2, '.', ','); break;
+        case 'amount_no_decimals_with_comma_separator': value = formatWithDelimiters(cents, 0, '.', ','); break;
+      }
+      return formatString.replace(/\{\{\s*\w+\s*\}\}/, value);
+    };
+  </script>
+
+  {{ content_for_header }}
+</head>
+<body class="template-{{ template | replace: '.', '-' | handle }}">
+
+  {% sections 'announcement-group' %}
+  {% sections 'header-group' %}
+
+  <div data-scroll-progress style="position:fixed;top:0;left:0;height:2px;background:var(--accent);width:0;z-index:999;pointer-events:none"></div>
+
+  <main id="MainContent" role="main">
+    {{ content_for_layout }}
+  </main>
+
+  {% sections 'footer-group' %}
+
+  {% render 'cart-drawer' %}
+  {% render 'search-drawer' %}
+  {% render 'menu-drawer' %}
+
+  <div id="drawer-host" class="overlay" data-close hidden>
+    <div data-drawer="bag" hidden></div>
+    <div data-drawer="search" hidden></div>
+    <div data-drawer="menu" hidden></div>
+    <div data-drawer="filter" hidden></div>
+  </div>
+
+  <button class="bag-fab" data-bag-fab data-open="bag" hidden></button>
+
+  <script src="{{ 'theme.js' | asset_url }}" defer></script>
+</body>
+</html>

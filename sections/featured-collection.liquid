@@ -1,0 +1,67 @@
+{%- liquid
+  assign collection = collections[section.settings.collection]
+  assign limit = section.settings.limit | default: 4
+  assign products_to_show = collection.products | slice: 0, limit
+-%}
+<section class="section" id="section-{{ section.id }}">
+  {%- if section.settings.eyebrow != blank or section.settings.eyebrow_meta != blank -%}
+    <div class="section-eye sfx-reveal" data-reveal>
+      <span>{{ section.settings.eyebrow }}</span>
+      <span class="muted">{{ section.settings.eyebrow_meta }}</span>
+    </div>
+  {%- endif -%}
+
+  <div class="grid">
+    {%- if collection != blank and collection.products.size > 0 -%}
+      {%- for product in collection.products limit: limit -%}
+        <div class="sfx-reveal" data-reveal style="transition-delay: {{ forloop.index0 | times: 60 }}ms">
+          {% render 'product-card', product: product %}
+        </div>
+      {%- endfor -%}
+    {%- else -%}
+      {%- comment -%} Render 4 striped placeholders so the layout is intact in admin/preview {%- endcomment -%}
+      {%- for i in (1..limit) -%}
+        <div class="sfx-reveal" data-reveal style="transition-delay: {{ forloop.index0 | times: 60 }}ms">
+          {%- assign tints = section.settings.placeholder_palette | default: '#EFEDE8,#EAE6DC,#E6E8EB,#F2EFE8' | split: ',' -%}
+          {%- assign tint_idx = forloop.index0 | modulo: tints.size -%}
+          {% render 'product-card',
+            product: nil,
+            placeholder_label: section.settings.placeholder_label,
+            placeholder_bg: tints[tint_idx],
+            placeholder_fg: '#D5D0C5'
+          %}
+        </div>
+      {%- endfor -%}
+    {%- endif -%}
+  </div>
+
+  {%- if section.settings.button_text != blank -%}
+    <div class="cta-row">
+      <a href="{{ section.settings.button_link | default: collection.url | default: '#' }}" class="btn-outline dark" style="text-decoration:none">{{ section.settings.button_text }}</a>
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Product grid",
+  "settings": [
+    { "type": "header", "content": "Source" },
+    { "type": "collection", "id": "collection", "label": "Collection",
+      "info": "Select the collection whose products will be shown." },
+    { "type": "range", "id": "limit", "label": "Number of products", "min": 4, "max": 12, "step": 4, "default": 4 },
+    { "type": "header", "content": "Heading" },
+    { "type": "text", "id": "eyebrow",      "label": "Eyebrow (left)" },
+    { "type": "text", "id": "eyebrow_meta", "label": "Eyebrow meta (right)" },
+    { "type": "header", "content": "CTA" },
+    { "type": "text", "id": "button_text", "label": "Button text" },
+    { "type": "url",  "id": "button_link", "label": "Button link" },
+    { "type": "header", "content": "Empty state" },
+    { "type": "text", "id": "placeholder_label", "label": "Placeholder caption", "default": "product · placeholder" },
+    { "type": "text", "id": "placeholder_palette", "label": "Placeholder palette",
+      "info": "Comma-separated hex colours used for the striped fallback when the collection is empty.",
+      "default": "#EFEDE8,#EAE6DC,#E6E8EB,#F2EFE8" }
+  ],
+  "presets": [{ "name": "Product grid" }]
+}
+{% endschema %}

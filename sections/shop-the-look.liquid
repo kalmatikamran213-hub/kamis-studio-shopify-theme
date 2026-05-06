@@ -1,0 +1,66 @@
+{%- liquid
+  assign source = section.settings.source
+  assign related_products = empty
+  if source == 'collection' and section.settings.related_collection != blank
+    assign related_products = collections[section.settings.related_collection].products
+  elsif product != blank
+    assign related_products = product.collections.first.products
+  endif
+-%}
+<section class="stl">
+  <h2 class="stl-h sfx-reveal" data-reveal>{{ section.settings.heading | default: 'shop the look' }}</h2>
+  <div class="stl-grid">
+    <div class="sfx-reveal" data-reveal>
+      <div class="stl-feat">
+        {%- if section.settings.feature_image != blank -%}
+          <img src="{{ section.settings.feature_image | image_url: width: 1200 }}" alt="{{ section.settings.heading | default: 'shop the look' | escape }}">
+        {%- elsif product.images.size > 1 -%}
+          <img src="{{ product.images[1] | image_url: width: 1200 }}" alt="">
+        {%- elsif product.featured_image -%}
+          <img src="{{ product.featured_image | image_url: width: 1200 }}" alt="">
+        {%- else -%}
+          {% render 'striped-placeholder', label: 'editorial · feature', sub: 'add image in section settings', class: '' %}
+        {%- endif -%}
+      </div>
+    </div>
+    <div class="stl-cards">
+      {%- assign shown = 0 -%}
+      {%- for p in related_products -%}
+        {%- if p.handle == product.handle -%}{%- continue -%}{%- endif -%}
+        {%- if shown >= 2 -%}{%- break -%}{%- endif -%}
+        <div class="sfx-reveal" data-reveal>
+          {% render 'product-card', product: p %}
+        </div>
+        {%- assign shown = shown | plus: 1 -%}
+      {%- endfor -%}
+      {%- if shown < 2 -%}
+        {%- for i in (1..2) -%}
+          {%- if shown < 2 -%}
+            <div class="sfx-reveal" data-reveal>
+              {% render 'product-card', product: nil, placeholder_label: 'related · placeholder' %}
+            </div>
+            {%- assign shown = shown | plus: 1 -%}
+          {%- endif -%}
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Shop the look",
+  "settings": [
+    { "type": "text",  "id": "heading", "label": "Heading", "default": "shop the look" },
+    { "type": "select", "id": "source", "label": "Related products source", "default": "auto",
+      "options": [
+        { "value": "auto",       "label": "Auto (same collection)" },
+        { "value": "collection", "label": "Pick a collection" }
+      ]
+    },
+    { "type": "collection", "id": "related_collection", "label": "Related collection" },
+    { "type": "image_picker", "id": "feature_image", "label": "Feature image" }
+  ],
+  "presets": [{ "name": "Shop the look" }]
+}
+{% endschema %}

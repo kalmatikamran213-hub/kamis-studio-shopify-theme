@@ -1,0 +1,33 @@
+{
+  "type": "footer",
+  "name": "Footer",
+  "sections": {
+    "footer": {
+      "type": "footer",
+      "settings": {
+        "wordmark": "kamis:studio",
+        "tagline": "premium ai-crafted visuals for fashion & product brands. lahore · paris · new york."
+      },
+      "blocks": {
+        "shop": {
+          "type": "menu",
+          "settings": { "heading": "shop", "menu": "footer" }
+        },
+        "info": {
+          "type": "menu",
+          "settings": { "heading": "info", "menu": "footer" }
+        },
+        "support": {
+          "type": "menu",
+          "settings": { "heading": "support", "menu": "footer" }
+        },
+        "newsletter": {
+          "type": "newsletter",
+          "settings": { "heading": "connect", "show_socials": true }
+        }
+      },
+      "block_order": ["shop", "info", "support", "newsletter"]
+    }
+  },
+  "order": ["footer"]
+}

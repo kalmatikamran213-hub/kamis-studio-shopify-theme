@@ -1,0 +1,40 @@
+{%- comment -%}
+  Striped SVG placeholder, matches the editorial gallery aesthetic.
+
+  Accepts:
+    label: top-left mono caption       (string)
+    sub:   bottom-left mono caption    (string)
+    bg:    background hex              (default #EFEDE8)
+    fg:    stripe colour hex           (default #D9D5CC)
+    tint:  optional overlay tint hex
+    w/h:   intrinsic dimensions        (default 800x1000)
+    class: extra css class for <img>
+{%- endcomment -%}
+{%- liquid
+  assign w = w | default: 800
+  assign h = h | default: 1000
+  assign bg = bg | default: '#EFEDE8'
+  assign fg = fg | default: '#D9D5CC'
+  assign label = label | default: 'placeholder'
+  assign sub = sub | default: ''
+  assign cls = class | default: 'card-img'
+-%}
+{%- capture stripes -%}
+  {%- assign limit = h | times: 2 | plus: w -%}
+  {%- assign step = 22 -%}
+  {%- comment -%} Render fewer lines than the JS version (every 44px) to keep liquid output small. {%- endcomment -%}
+  {%- for i in (0..40) -%}
+    {%- assign x1 = i | times: 44 | minus: h -%}
+    {%- assign x2 = x1 | plus: h -%}
+    <line x1="{{ x1 }}" y1="0" x2="{{ x2 }}" y2="{{ h }}" stroke="{{ fg }}" stroke-width="1"/>
+  {%- endfor -%}
+{%- endcapture -%}
+{%- capture tint_rect -%}
+  {%- if tint -%}
+    <rect width="{{ w }}" height="{{ h }}" fill="{{ tint }}" opacity="0.18"/>
+  {%- endif -%}
+{%- endcapture -%}
+{%- capture svg -%}
+<svg xmlns='http://www.w3.org/2000/svg' width='{{ w }}' height='{{ h }}' viewBox='0 0 {{ w }} {{ h }}'><rect width='{{ w }}' height='{{ h }}' fill='{{ bg }}'/><g>{{ stripes | strip }}</g>{{ tint_rect }}<g font-family='ui-monospace, SFMono-Regular, Menlo, monospace' font-size='13' fill='#0A0A0A' opacity='0.55'><text x='20' y='28'>[ {{ label | escape }} ]</text><text x='20' y='{{ h | minus: 18 }}'>{{ sub | escape }}</text></g></svg>
+{%- endcapture -%}
+<img src="data:image/svg+xml;utf8,{{ svg | url_encode }}" alt="{{ label | escape }}" class="{{ cls }}" loading="lazy">

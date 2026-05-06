@@ -1,0 +1,15 @@
+{
+  "type": "header",
+  "name": "Header",
+  "sections": {
+    "header": {
+      "type": "header",
+      "settings": {
+        "wordmark": "kamis:studio",
+        "menu": "main-menu",
+        "always_solid": false
+      }
+    }
+  },
+  "order": ["header"]
+}

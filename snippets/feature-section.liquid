@@ -1,0 +1,117 @@
+{%- comment -%}
+  Full-bleed editorial product feature.
+  Accepts:
+    product: Shopify product
+    index:   integer (used for f.NN numeral and L/R alternation)
+{%- endcomment -%}
+{%- liquid
+  assign idx = index | default: 0
+  assign mod = idx | modulo: 2
+  assign flipped = false
+  if mod == 1
+    assign flipped = true
+  endif
+  assign fnum = idx | plus: 1 | prepend: '0' | slice: -2, 2
+  assign hero = product.featured_image
+  if product.images.size > 1
+    assign ed1 = product.images[1]
+  else
+    assign ed1 = hero
+  endif
+  if product.images.size > 2
+    assign ed2 = product.images[2]
+  else
+    assign ed2 = ed1
+  endif
+-%}
+<section class="feature{% if flipped %} is-flipped{% endif %} sfx-reveal" data-reveal data-parallax-feature="60" aria-label="featured · {{ product.title | escape }}">
+  {%- assign hero_pane -%}
+    <a href="{{ product.url }}" class="feat-pane feat-left" aria-label="view {{ product.title | escape }}">
+      <span class="feat-num" aria-hidden="true">f.{{ fnum }}</span>
+      {%- if hero -%}
+        <img src="{{ hero | image_url: width: 1400 }}" alt="{{ product.title | escape }}" loading="lazy">
+      {%- else -%}
+        {% render 'striped-placeholder', label: 'product · ' append: product.title, sub: 'flat', class: '' %}
+      {%- endif -%}
+      <span class="feat-corner" aria-hidden="true">[ {{ product.metafields.kamis.tag | default: product.tags.first | default: 'new.in' }} ]</span>
+    </a>
+  {%- endassign -%}
+
+  {%- assign mid_pane -%}
+    <a href="{{ product.url }}" class="feat-pane feat-mid" aria-label="view {{ product.title | escape }} on model" tabindex="-1">
+      {%- if ed1 -%}
+        <img src="{{ ed1 | image_url: width: 1000 }}" alt="" loading="lazy">
+      {%- else -%}
+        {% render 'striped-placeholder', label: 'editorial 1', sub: '', class: '' %}
+      {%- endif -%}
+      {%- if ed2 -%}
+        <img src="{{ ed2 | image_url: width: 1000 }}" alt="" loading="lazy">
+      {%- else -%}
+        {% render 'striped-placeholder', label: 'editorial 2', sub: '', class: '' %}
+      {%- endif -%}
+    </a>
+  {%- endassign -%}
+
+  {%- assign right_pane -%}
+    <div class="feat-pane feat-right">
+      <div class="feat-top">
+        <span class="feat-eyebrow"><span class="feat-dot"></span> drop:one · feature</span>
+        <button type="button" class="feat-bookmark" aria-label="save"
+                onclick="this.classList.toggle('is-saved');var p=this.querySelector('path');if(p){p.setAttribute('fill', this.classList.contains('is-saved')?'#0A0A0A':'none')}">
+          {% render 'icon-bookmark' %}
+        </button>
+      </div>
+      <div class="feat-body">
+        <div class="feat-meta-top">
+          <span class="feat-tag-pill">{{ product.metafields.kamis.tag | default: product.tags.first | default: 'new.in' }}</span>
+          <span class="feat-id">no. {{ product.id | modulo: 1000 }}</span>
+        </div>
+        <a href="{{ product.url }}" class="feat-name">{{ product.title | downcase }}</a>
+        <div class="feat-variant">{{ product.metafields.kamis.variant | default: product.options_with_values.first.values.first | default: '' | downcase }}</div>
+        <div class="feat-price-row">
+          <span class="feat-price">{{ product.price | money }}</span>
+          {%- for opt in product.options_with_values -%}
+            {%- assign nm = opt.name | downcase -%}
+            {%- if nm contains 'color' or nm contains 'colour' -%}
+              <span class="feat-swatches">
+                {%- for v in opt.values limit: 4 -%}
+                  <span class="feat-dot-color" style="background:{{ v | downcase | handle }};"></span>
+                {%- endfor -%}
+              </span>
+              {%- break -%}
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+        {%- assign description = product.metafields.kamis.short_description | default: product.description | strip_html | truncate: 140 -%}
+        <p class="feat-desc">{{ description }}</p>
+        <ul class="feat-spec">
+          <li><span>fit</span><span>{{ product.metafields.kamis.fit_short | default: 'true to size' }}</span></li>
+          <li><span>materials</span><span>{{ product.metafields.kamis.materials | default: 'premium' | strip_html | truncate: 60 }}</span></li>
+          <li><span>availability</span><span>
+            {%- assign avail = '' -%}
+            {%- for v in product.variants -%}
+              {%- if v.available -%}{%- assign avail = avail | append: v.title | append: ' · ' -%}{%- endif -%}
+            {%- endfor -%}
+            {{ avail | replace_last: ' · ', '' | downcase | default: 'limited' | truncate: 50 }}
+          </span></li>
+        </ul>
+      </div>
+      <div class="feat-cta">
+        <form method="post" action="{{ routes.cart_add_url }}" style="margin:0">
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+          <input type="hidden" name="quantity" value="1">
+          <button type="submit" class="btn-feat-add" data-add-to-cart>
+            <span aria-hidden="true">+</span> add to bag
+          </button>
+        </form>
+        <a class="feat-view" href="{{ product.url }}">{{ 'products.product.view_product' | t }} <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  {%- endassign -%}
+
+  {%- if flipped -%}
+    {{ right_pane }}{{ mid_pane }}{{ hero_pane }}
+  {%- else -%}
+    {{ hero_pane }}{{ mid_pane }}{{ right_pane }}
+  {%- endif -%}
+</section>

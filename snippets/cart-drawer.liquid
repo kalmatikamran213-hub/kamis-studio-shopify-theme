@@ -1,0 +1,28 @@
+{%- comment -%} Cart drawer template — populated by JS via /cart.js {%- endcomment -%}
+<template id="tmpl-cart-drawer">
+  <aside class="drawer" data-drawer-shell onclick="event.stopPropagation()">
+    <header class="drawer-h">
+      <span>bag (<span data-bag-count>0</span>)</span>
+      <button data-close aria-label="close">×</button>
+    </header>
+    <div class="drawer-body">
+      <div class="empty">
+        <p>{{ 'cart.general.empty' | t }}</p>
+        <p class="muted">drop:one of spring:summer '26 is now live.</p>
+        <button class="btn-outline dark" data-close>see:more</button>
+      </div>
+    </div>
+  </aside>
+</template>
+
+<script>
+  // Populate the bag drawer in the host on load
+  (function(){
+    var host = document.getElementById('drawer-host');
+    if (!host) return;
+    var slot = host.querySelector('[data-drawer="bag"]');
+    if (!slot) return;
+    var tmpl = document.getElementById('tmpl-cart-drawer');
+    if (tmpl) slot.appendChild(tmpl.content.cloneNode(true));
+  })();
+</script>

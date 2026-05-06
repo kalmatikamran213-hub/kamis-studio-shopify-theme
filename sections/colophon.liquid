@@ -1,0 +1,32 @@
+<section class="colophon">
+  <div class="col-l">
+    {%- if section.settings.eyebrow != blank -%}
+      <div class="muted small">{{ section.settings.eyebrow }}</div>
+    {%- endif -%}
+    {%- if section.settings.heading != blank -%}
+      <h3>{{ section.settings.heading }}</h3>
+    {%- endif -%}
+  </div>
+  <div class="col-r muted">
+    {%- if section.settings.body != blank -%}
+      {{ section.settings.body }}
+    {%- endif -%}
+    {%- if section.settings.contact != blank -%}
+      <p class="small" style="margin-top: 24px">{{ section.settings.contact }}</p>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Colophon",
+  "settings": [
+    { "type": "text",     "id": "eyebrow", "label": "Eyebrow", "default": "studio · note 001" },
+    { "type": "text",     "id": "heading", "label": "Heading", "default": "every visual on this site is ai-crafted, art-directed, and human-finished by kamis studio." },
+    { "type": "richtext", "id": "body",    "label": "Body",
+      "default": "<p>we operate as a creative atelier for fashion and product brands. each campaign in this drop was rendered, retouched, and graded over a six-week production cycle — no physical samples, no shoot days, no waste.</p>" },
+    { "type": "text",     "id": "contact", "label": "Contact line", "default": "contact · studio@kamis.studio" }
+  ],
+  "presets": [{ "name": "Colophon" }]
+}
+{% endschema %}

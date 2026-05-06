@@ -1,0 +1,66 @@
+<nav class="nav{% if section.settings.always_solid %} always-solid{% endif %}" data-header>
+  <div class="nav-inner">
+    <ul class="nav-l">
+      {%- for link in section.settings.menu.links -%}
+        <li>
+          <a href="{{ link.url }}">
+            {%- if link.handle == 'drop-one' or link.title contains 'drop' -%}
+              <span data-accent>{{ link.title | downcase }}</span>
+            {%- else -%}
+              {{ link.title | downcase }}
+            {%- endif -%}
+          </a>
+        </li>
+      {%- else -%}
+        <li><a href="/collections/all">shop</a></li>
+        <li><a href="/pages/brand">brand</a></li>
+        <li><a href="/collections/new-in">new:in</a></li>
+        <li><a href="/collections/drop-one"><span data-accent>drop:one</span></a></li>
+      {%- endfor -%}
+    </ul>
+
+    <button class="nav-burger" type="button" data-open="menu" aria-label="menu">
+      <span></span><span></span><span></span>
+    </button>
+
+    <a href="{{ shop.url }}" class="wordmark" aria-label="{{ shop.name }}">
+      {%- assign mark = section.settings.wordmark | default: 'kamis:studio' -%}
+      {%- if mark contains ':' -%}
+        {%- assign parts = mark | split: ':' -%}
+        <span>{{ parts[0] }}</span><span class="wm-colon">:</span><span>{{ parts[1] }}</span>
+      {%- else -%}
+        <span>{{ mark }}</span>
+      {%- endif -%}
+    </a>
+
+    <ul class="nav-r">
+      <li><a href="/pages/info">info</a></li>
+      <li><a href="/account">account</a></li>
+      <li><button type="button" class="linklike" data-open="search">search</button></li>
+      <li>
+        <button type="button" class="linklike" data-open="bag">
+          bag <span class="bag-count" data-bag-count>({{ cart.item_count }})</span>
+        </button>
+      </li>
+    </ul>
+  </div>
+</nav>
+
+<style>
+  .nav.is-scrolled [data-accent], .nav.always-solid [data-accent] { color: var(--accent); }
+</style>
+
+{% schema %}
+{
+  "name": "Header",
+  "settings": [
+    { "type": "text",      "id": "wordmark",      "label": "Wordmark",     "default": "kamis:studio",
+      "info": "Use a colon to colour the separator with the brand accent." },
+    { "type": "link_list", "id": "menu",          "label": "Main menu",    "default": "main-menu" },
+    { "type": "checkbox",  "id": "always_solid",  "label": "Always solid background",
+      "info": "When off, the nav is transparent over hero sections and turns white on scroll.",
+      "default": false }
+  ],
+  "presets": [{ "name": "Header" }]
+}
+{% endschema %}

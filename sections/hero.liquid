@@ -1,0 +1,87 @@
+{%- liquid
+  assign h = section.settings.height | default: '78vh'
+  assign palette = section.settings.palette | default: '#A89177,#7A6852,#3F3429,#1F1A14'
+-%}
+<section class="hero" id="section-{{ section.id }}">
+  <div class="ph-video" style="height: {{ h }};">
+    {%- if section.settings.video != blank -%}
+      <video src="{{ section.settings.video }}" autoplay muted loop playsinline
+             style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1"></video>
+    {%- elsif section.settings.image != blank -%}
+      <img src="{{ section.settings.image | image_url: width: 2400 }}"
+           alt="{{ section.settings.label | default: 'hero' | escape }}"
+           style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1"
+           loading="eager" fetchpriority="high">
+    {%- else -%}
+      <div class="ph-video-bg kb" style="background: linear-gradient(135deg, {{ palette }});"></div>
+    {%- endif -%}
+
+    <div class="ph-video-stripes"></div>
+    <div class="ph-video-grain"></div>
+    <div class="ph-video-vignette"></div>
+
+    <div class="ph-video-meta">
+      <span>[ {{ section.settings.label | default: 'hero · drop:one campaign film' }} ]</span>
+      <span>{{ section.settings.sub | default: "placeholder · drop campaign reel · 1920×1080 · loop" }}</span>
+    </div>
+
+    {%- if section.settings.headline != blank -%}
+      <div class="hero-overlay-l">
+        <div class="hero-eye">{{ section.settings.headline }}</div>
+        {%- if section.settings.subheadline != blank -%}
+          <div class="hero-sub">{{ section.settings.subheadline }}</div>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.card_text != blank -%}
+      <div class="hero-overlay-r">
+        <div class="hero-card-text">{{ section.settings.card_text }}</div>
+        {%- if section.settings.card_button_text != blank -%}
+          <a href="{{ section.settings.card_button_link | default: '#' }}" class="btn-outline white" style="text-decoration:none">{{ section.settings.card_button_text }}</a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- if section.settings.show_marquee -%}
+      <div class="hero-marquee" aria-hidden="true">
+        <div class="marquee-track">
+          {%- for i in (1..8) -%}
+            <span>{{ section.settings.marquee_text | default: "kamis:studio   ·   drop:one   ·   spring:summer '26   ·   ai-crafted visuals   ·  " }}&nbsp;</span>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    { "type": "header", "content": "Media" },
+    { "type": "image_picker", "id": "image", "label": "Image (fallback)" },
+    { "type": "url", "id": "video", "label": "Video URL (mp4)",
+      "info": "Direct video URL. Falls back to the image, then to the gradient palette." },
+    { "type": "text", "id": "palette", "label": "Gradient palette (hex, comma-separated)",
+      "default": "#A89177,#7A6852,#3F3429,#1F1A14",
+      "info": "Used when no image or video is set." },
+    { "type": "text", "id": "height", "label": "Height", "default": "78vh" },
+    { "type": "header", "content": "Caption (mono, top-left)" },
+    { "type": "text", "id": "label", "label": "Label", "default": "hero · drop:one campaign film" },
+    { "type": "text", "id": "sub",   "label": "Sub",   "default": "placeholder · drop campaign reel · 1920×1080 · loop" },
+    { "type": "header", "content": "Headline (bottom-left)" },
+    { "type": "text", "id": "headline",    "label": "Headline",    "default": "drop:one" },
+    { "type": "text", "id": "subheadline", "label": "Subheadline", "default": "spring:summer '26" },
+    { "type": "header", "content": "Card (bottom-right)" },
+    { "type": "text", "id": "card_text",        "label": "Card text",   "default": "drop:one of spring:summer '26 now live for kamis | members" },
+    { "type": "text", "id": "card_button_text", "label": "Button text", "default": "see:more" },
+    { "type": "url",  "id": "card_button_link", "label": "Button link" },
+    { "type": "header", "content": "Marquee" },
+    { "type": "checkbox", "id": "show_marquee", "label": "Show marquee strip", "default": true },
+    { "type": "text",     "id": "marquee_text", "label": "Marquee text",
+      "default": "kamis:studio   ·   drop:one   ·   spring:summer '26   ·   ai-crafted visuals   ·  " }
+  ],
+  "presets": [{ "name": "Hero" }]
+}
+{% endschema %}

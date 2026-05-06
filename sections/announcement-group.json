@@ -1,0 +1,15 @@
+{
+  "type": "header",
+  "name": "Announcement bar",
+  "sections": {
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "settings": {
+        "message": "free shipping worldwide on orders over rs.25,000 →",
+        "bg_color": "#3D1418",
+        "dismissible": true
+      }
+    }
+  },
+  "order": ["announcement-bar"]
+}

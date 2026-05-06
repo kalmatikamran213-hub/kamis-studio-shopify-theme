@@ -1,0 +1,29 @@
+<div class="shop-root">
+  <header class="shop-head">
+    <span class="shop-eyebrow"><span class="sfx-pulse-dot"></span> collections</span>
+    <h1 class="shop-title">all collections</h1>
+  </header>
+
+  <section class="shop-stream" data-view="product">
+    <div class="shop-row">
+      {%- for c in collections -%}
+        <article class="card shop-card sfx-reveal" data-reveal>
+          <a href="{{ c.url }}" class="card-img-wrap" style="background: var(--card)">
+            {%- if c.image -%}
+              <img src="{{ c.image | image_url: width: 800 }}" alt="{{ c.title | escape }}" class="card-img product-image" loading="lazy">
+            {%- else -%}
+              {% render 'striped-placeholder', label: 'collection · ' append: c.title, sub: c.products_count | append: ' pieces', class: 'card-img' %}
+            {%- endif -%}
+          </a>
+          <div class="card-meta">
+            <div class="card-name-row">
+              <span class="card-name">{{ c.title | downcase }}</span>
+              <span class="card-variant">{{ c.products_count }} pieces</span>
+            </div>
+            <a href="{{ c.url }}" class="card-price linklike">view →</a>
+          </div>
+        </article>
+      {%- endfor -%}
+    </div>
+  </section>
+</div>

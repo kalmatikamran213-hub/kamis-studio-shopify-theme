@@ -1,0 +1,27 @@
+<div class="shop-root">
+  <header class="shop-head">
+    <span class="shop-eyebrow"><span class="sfx-pulse-dot"></span> search</span>
+    <h1 class="shop-title">{% if search.performed %}{{ search.results_count }} results for "{{ search.terms | escape }}"{% else %}search{% endif %}</h1>
+    <form action="{{ routes.search_url }}" method="get" style="width: min(560px, 100%); margin: 24px auto 0">
+      <input class="search-input" name="q" value="{{ search.terms | escape }}" placeholder="{{ 'general.search.placeholder' | t }}" autocomplete="off">
+    </form>
+  </header>
+
+  {%- if search.performed -%}
+    {%- if search.results_count > 0 -%}
+      <section class="shop-stream" data-view="product">
+        <div class="shop-row">
+          {%- for item in search.results limit: 24 -%}
+            {%- if item.object_type == 'product' -%}
+              <div class="sfx-reveal" data-reveal>{% render 'shop-card', product: item, index: forloop.index0 %}</div>
+            {%- endif -%}
+          {%- endfor -%}
+        </div>
+      </section>
+    {%- else -%}
+      <div style="padding: 80px var(--pad-x); text-align: center;">
+        <p class="muted">no results for "{{ search.terms | escape }}".</p>
+      </div>
+    {%- endif -%}
+  {%- endif -%}
+</div>
