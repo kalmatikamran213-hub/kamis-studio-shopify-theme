@@ -3,17 +3,27 @@
   paginate collection.products by 24
 -%}
 
+{%- liquid
+  if collection.handle == 'all' or section.settings.eyebrow == blank
+    assign eyebrow_text = 'shop all · ' | append: collection.products_count | append: ' pieces'
+  else
+    assign eyebrow_text = section.settings.eyebrow
+  endif
+  if collection.handle == 'all'
+    assign page_title = 'all products'
+  else
+    assign page_title = collection.title | downcase
+  endif
+-%}
 <header class="shop-head">
   <span class="shop-eyebrow sfx-chip" data-reveal>
-    <span class="sfx-pulse-dot"></span> {{ section.settings.eyebrow | default: 'drop:one · live' }}
+    <span class="sfx-pulse-dot"></span> {{ eyebrow_text }}
   </span>
-  <h1 class="shop-title sfx-reveal" data-reveal>
-    {{ collection.title | default: 'collection' | downcase }}
-  </h1>
+  <h1 class="shop-title sfx-reveal" data-reveal>{{ page_title }}</h1>
   <div class="shop-meta sfx-reveal" data-reveal style="transition-delay: 120ms">
     <span>{{ collection.products_count }} pieces</span>
     <span class="dot-sep"></span>
-    <span>{{ section.settings.meta_a | default: 'ai-crafted' }}</span>
+    <span>{{ section.settings.meta_a | default: 'men & women' }}</span>
     <span class="dot-sep"></span>
     <span>{{ section.settings.meta_b | default: 'shipping global' }}</span>
   </div>
@@ -125,7 +135,7 @@
     {%- else -%}
       <span>{{ mark }}</span>
     {%- endif -%}
-    <div class="muted small" style="margin-top: 8px">drop:one · spring:summer '26</div>
+    <div class="muted small" style="margin-top: 8px">{{ collection.title | downcase }} · {{ collection.products_count }} pieces</div>
   </div>
 </section>
 
@@ -189,8 +199,8 @@
 {
   "name": "Collection",
   "settings": [
-    { "type": "text",  "id": "eyebrow",       "label": "Eyebrow",       "default": "drop:one · live" },
-    { "type": "text",  "id": "meta_a",        "label": "Meta A",        "default": "ai-crafted" },
+    { "type": "text",  "id": "eyebrow",       "label": "Eyebrow (leave blank to auto-generate)", "default": "" },
+    { "type": "text",  "id": "meta_a",        "label": "Meta A",        "default": "men & women" },
     { "type": "text",  "id": "meta_b",        "label": "Meta B",        "default": "shipping global" },
     { "type": "range", "id": "feature_every", "label": "Feature every Nth product", "min": 4, "max": 10, "step": 1, "default": 5,
       "info": "Every Nth product is rendered as a full-bleed editorial feature." }
