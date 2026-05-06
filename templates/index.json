@@ -1,18 +1,28 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
       "type": "hero",
       "settings": {
-        "height": "78vh",
+        "palette": "#A89177,#7A6852,#3F3429,#1F1A14",
+        "height": "98vh",
         "label": "hero · campaign film",
         "sub": "kamis:studio · premium fashion · men & women",
         "headline": "kamis:studio",
         "subheadline": "premium · affordable · for everyone",
         "card_text": "premium quality for men & women · new collection now live",
         "card_button_text": "shop now",
+        "card_button_link": "",
         "show_marquee": true,
-        "marquee_text": "kamis:studio   ·   men   ·   women   ·   premium quality   ·   affordable price   ·  ",
-        "palette": "#A89177,#7A6852,#3F3429,#1F1A14"
+        "marquee_text": "kamis:studio   ·   men   ·   women   ·   premium quality   ·   affordable price   ·"
       }
     },
     "intro": {
@@ -20,7 +30,8 @@
       "settings": {
         "heading": "premium fashion for men & women",
         "body": "<p>kamis:studio is a premium fashion brand built for everyone. elevated basics, refined silhouettes, and quality materials — designed to look expensive without the price tag.</p>",
-        "button_text": "shop all"
+        "button_text": "shop all",
+        "button_link": ""
       }
     },
     "gender-split": {
@@ -29,17 +40,22 @@
         "men_eyebrow": "for him",
         "men_label": "men",
         "men_button": "shop men",
+        "men_link": "",
         "women_eyebrow": "for her",
         "women_label": "women",
-        "women_button": "shop women"
+        "women_button": "shop women",
+        "women_link": ""
       }
     },
     "new-in": {
       "type": "featured-collection",
       "settings": {
+        "collection": "",
         "limit": 4,
         "eyebrow": "new:in",
         "eyebrow_meta": "just dropped · fresh arrivals",
+        "button_text": "",
+        "button_link": "",
         "placeholder_label": "product · new:in",
         "placeholder_palette": "#EFEDE8,#EAE6DC,#E6E8EB,#F2EFE8"
       }
@@ -47,20 +63,27 @@
     "banner-men": {
       "type": "editorial-banner",
       "settings": {
+        "palette": "#1A1A1A,#2C2C2C,#3F3429,#1F1A14",
+        "kenburns": true,
+        "height": "80vh",
         "label": "banner · men's collection",
         "sub": "upload your campaign video or image",
         "heading": "men's collection",
         "subheading": "premium cuts · refined fits · affordable",
         "position": "center",
         "button_text": "shop men",
-        "palette": "#1A1A1A,#2C2C2C,#3F3429,#1F1A14"
+        "button_link": ""
       }
     },
     "men-products": {
       "type": "featured-collection",
       "settings": {
+        "collection": "",
         "limit": 4,
+        "eyebrow": "",
+        "eyebrow_meta": "",
         "button_text": "shop all men",
+        "button_link": "",
         "placeholder_label": "product · men",
         "placeholder_palette": "#1D2433,#15161A,#C7544B,#F4EAD0"
       }
@@ -68,20 +91,27 @@
     "banner-women": {
       "type": "editorial-banner",
       "settings": {
+        "palette": "#D9D2BC,#9F9876,#5C5638,#23211A",
+        "kenburns": true,
+        "height": "80vh",
         "label": "banner · women's collection",
         "sub": "upload your campaign video or image",
         "heading": "women's collection",
         "subheading": "elevated style · effortless · affordable",
         "position": "bottom",
         "button_text": "shop women",
-        "palette": "#D9D2BC,#9F9876,#5C5638,#23211A"
+        "button_link": ""
       }
     },
     "women-products": {
       "type": "featured-collection",
       "settings": {
+        "collection": "",
         "limit": 4,
+        "eyebrow": "",
+        "eyebrow_meta": "",
         "button_text": "shop all women",
+        "button_link": "",
         "placeholder_label": "product · women",
         "placeholder_palette": "#EFEAD9,#E8E0D4,#D5CFC4,#C9C9C7"
       }
@@ -89,13 +119,16 @@
     "banner-quality": {
       "type": "editorial-banner",
       "settings": {
+        "palette": "#3A4A3F,#22312A,#161D19,#0B100E",
+        "kenburns": true,
+        "height": "80vh",
         "label": "editorial · premium quality",
         "sub": "upload your brand video or image",
         "heading": "premium quality",
         "subheading": "looks expensive · priced for everyone",
         "position": "bottom",
-        "kenburns": true,
-        "palette": "#3A4A3F,#22312A,#161D19,#0B100E"
+        "button_text": "",
+        "button_link": ""
       }
     },
     "colophon": {
