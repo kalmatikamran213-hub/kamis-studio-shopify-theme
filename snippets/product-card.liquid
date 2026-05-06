@@ -55,10 +55,14 @@
 
   <div class="card-meta">
     <div class="card-name-row">
-      <span class="card-name">{{ product.title | default: placeholder_label | default: 'placeholder' | downcase }}</span>
+      <span class="card-name">{{ product.title | default: placeholder_label | default: 'product name' | downcase }}</span>
       <span class="card-variant">{{ product.metafields.kamis.variant | default: product.options_with_values.first.values.first | default: '' | downcase }}</span>
     </div>
-    <div class="card-price">{{ product.price | money }}</div>
+    {%- if product -%}
+      <div class="card-price">{{ product.price | money }}</div>
+    {%- else -%}
+      <div class="card-price muted">add product in shopify</div>
+    {%- endif -%}
   </div>
 
   {%- assign swatch_count = 0 -%}

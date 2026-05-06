@@ -21,7 +21,7 @@
       <div class="gender-label">
         <span class="gender-eyebrow">{{ section.settings.men_eyebrow | default: 'for him' }}</span>
         <h2 class="gender-title">{{ section.settings.men_label | default: 'men' }}</h2>
-        <a href="{{ section.settings.men_link | default: '/collections/men' }}" class="btn-outline white" style="text-decoration:none">{{ section.settings.men_button | default: 'shop men' }}</a>
+        <a href="{{ section.settings.men_link | default: '/collections/all?filter.p.tag=men' }}" class="btn-outline white" style="text-decoration:none">{{ section.settings.men_button | default: 'shop men' }}</a>
       </div>
     </div>
 
@@ -45,7 +45,7 @@
       <div class="gender-label">
         <span class="gender-eyebrow">{{ section.settings.women_eyebrow | default: 'for her' }}</span>
         <h2 class="gender-title">{{ section.settings.women_label | default: 'women' }}</h2>
-        <a href="{{ section.settings.women_link | default: '/collections/women' }}" class="btn-outline white" style="text-decoration:none">{{ section.settings.women_button | default: 'shop women' }}</a>
+        <a href="{{ section.settings.women_link | default: '/collections/all?filter.p.tag=women' }}" class="btn-outline white" style="text-decoration:none">{{ section.settings.women_button | default: 'shop women' }}</a>
       </div>
     </div>
 
@@ -78,7 +78,7 @@
     { "type": "text",         "id": "men_eyebrow", "label": "Eyebrow",     "default": "for him" },
     { "type": "text",         "id": "men_label",   "label": "Title",       "default": "men" },
     { "type": "text",         "id": "men_button",  "label": "Button text", "default": "shop men" },
-    { "type": "url",          "id": "men_link",    "label": "Button link" },
+    { "type": "url",          "id": "men_link",    "label": "Button link", "default": "/collections/all?filter.p.tag=men" },
     { "type": "header", "content": "Women's side" },
     { "type": "video",        "id": "women_video",   "label": "Women — Video (takes priority)" },
     { "type": "image_picker", "id": "women_image",   "label": "Women — Image (fallback)" },
