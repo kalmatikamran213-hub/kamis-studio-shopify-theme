@@ -4,9 +4,11 @@
 -%}
 <section class="hero" id="section-{{ section.id }}">
   <div class="ph-video" style="height: {{ h }};">
+
     {%- if section.settings.video != blank -%}
-      <video src="{{ section.settings.video }}" autoplay muted loop playsinline
-             style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;z-index:1"></video>
+      <div style="position:absolute;inset:0;z-index:1;overflow:hidden">
+        {{ section.settings.video | video_tag: autoplay: true, loop: true, muted: true, playsinline: true, style: "width:100%;height:100%;object-fit:cover;display:block" }}
+      </div>
     {%- elsif section.settings.image != blank -%}
       <img src="{{ section.settings.image | image_url: width: 2400 }}"
            alt="{{ section.settings.label | default: 'hero' | escape }}"
@@ -21,8 +23,8 @@
     <div class="ph-video-vignette"></div>
 
     <div class="ph-video-meta">
-      <span>[ {{ section.settings.label | default: 'hero · drop:one campaign film' }} ]</span>
-      <span>{{ section.settings.sub | default: "placeholder · drop campaign reel · 1920×1080 · loop" }}</span>
+      <span>[ {{ section.settings.label | default: 'hero · campaign film' }} ]</span>
+      <span>{{ section.settings.sub | default: "upload your campaign video in theme editor" }}</span>
     </div>
 
     {%- if section.settings.headline != blank -%}
@@ -47,7 +49,7 @@
       <div class="hero-marquee" aria-hidden="true">
         <div class="marquee-track">
           {%- for i in (1..8) -%}
-            <span>{{ section.settings.marquee_text | default: "kamis:studio   ·   drop:one   ·   spring:summer '26   ·   ai-crafted visuals   ·  " }}&nbsp;</span>
+            <span>{{ section.settings.marquee_text | default: "kamis:studio   ·   men   ·   women   ·   premium quality   ·   affordable price   ·  " }}&nbsp;</span>
           {%- endfor -%}
         </div>
       </div>
@@ -59,28 +61,28 @@
 {
   "name": "Hero",
   "settings": [
-    { "type": "header", "content": "Media" },
-    { "type": "image_picker", "id": "image", "label": "Image (fallback)" },
-    { "type": "url", "id": "video", "label": "Video URL (mp4)",
-      "info": "Direct video URL. Falls back to the image, then to the gradient palette." },
+    { "type": "header", "content": "Media — upload video or image" },
+    { "type": "video", "id": "video", "label": "Video",
+      "info": "Upload an mp4 directly from your Shopify Files. Takes priority over image." },
+    { "type": "image_picker", "id": "image", "label": "Image (fallback if no video)" },
     { "type": "text", "id": "palette", "label": "Gradient palette (hex, comma-separated)",
       "default": "#A89177,#7A6852,#3F3429,#1F1A14",
       "info": "Used when no image or video is set." },
     { "type": "text", "id": "height", "label": "Height", "default": "78vh" },
-    { "type": "header", "content": "Caption (mono, top-left)" },
-    { "type": "text", "id": "label", "label": "Label", "default": "hero · drop:one campaign film" },
-    { "type": "text", "id": "sub",   "label": "Sub",   "default": "placeholder · drop campaign reel · 1920×1080 · loop" },
+    { "type": "header", "content": "Caption (top-left)" },
+    { "type": "text", "id": "label", "label": "Label", "default": "hero · campaign film" },
+    { "type": "text", "id": "sub",   "label": "Sub",   "default": "kamis:studio · premium fashion · men & women" },
     { "type": "header", "content": "Headline (bottom-left)" },
-    { "type": "text", "id": "headline",    "label": "Headline",    "default": "drop:one" },
-    { "type": "text", "id": "subheadline", "label": "Subheadline", "default": "spring:summer '26" },
+    { "type": "text", "id": "headline",    "label": "Headline",    "default": "kamis:studio" },
+    { "type": "text", "id": "subheadline", "label": "Subheadline", "default": "premium · affordable · for everyone" },
     { "type": "header", "content": "Card (bottom-right)" },
-    { "type": "text", "id": "card_text",        "label": "Card text",   "default": "drop:one of spring:summer '26 now live for kamis | members" },
-    { "type": "text", "id": "card_button_text", "label": "Button text", "default": "see:more" },
+    { "type": "text", "id": "card_text",        "label": "Card text",   "default": "premium quality for men & women · new collection now live" },
+    { "type": "text", "id": "card_button_text", "label": "Button text", "default": "shop now" },
     { "type": "url",  "id": "card_button_link", "label": "Button link" },
     { "type": "header", "content": "Marquee" },
     { "type": "checkbox", "id": "show_marquee", "label": "Show marquee strip", "default": true },
     { "type": "text",     "id": "marquee_text", "label": "Marquee text",
-      "default": "kamis:studio   ·   drop:one   ·   spring:summer '26   ·   ai-crafted visuals   ·  " }
+      "default": "kamis:studio   ·   men   ·   women   ·   premium quality   ·   affordable price   ·  " }
   ],
   "presets": [{ "name": "Hero" }]
 }
