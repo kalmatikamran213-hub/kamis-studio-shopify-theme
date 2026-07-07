@@ -1332,3 +1332,59 @@ a.order-row:hover .order-id { color: var(--accent); }
 
 /* hero bg gets parallax headroom (JS translates it on scroll) */
 .hero .ph-video-bg { top: -20%; bottom: auto; height: 140%; will-change: transform; }
+
+/* =========================================================
+   MOBILE LAYER — final overrides (reference: mobile design)
+   ========================================================= */
+@media (max-width: 768px) {
+  /* nav: menu button · wordmark · search+bag */
+  .nav-l { display: flex; }                     /* undo legacy hide */
+  .nav-l li { display: none; }
+  .nav-l li:first-child { display: block; }     /* menu button stays */
+  .nav-r li { display: none; }
+  .nav-r li:nth-last-child(2), .nav-r li:nth-last-child(1) { display: block; }
+  .nav-inner { gap: 12px; }
+
+  /* product grids → 2-up like the reference */
+  .pg-grid { grid-template-columns: repeat(2, 1fr); }
+  .sec-head { flex-wrap: wrap; row-gap: 10px; }
+
+  /* cards: tighter meta, quick-add always visible on touch */
+  .card-meta { flex-direction: column; gap: 2px; align-items: flex-start; padding: 10px 10px 4px; }
+  .card-name-row { flex-wrap: wrap; gap: 6px; }
+  .card-quick { opacity: 1; transform: translateY(0); font-size: 11px; padding: 9px 10px; }
+  .card-swatches { padding: 0 10px 10px; }
+
+  /* hero */
+  .hero-overlay-l { bottom: 72px; right: var(--pad-x); }
+  .hero-eye { font-size: clamp(44px, 15vw, 68px); }
+  .hero-sub { font-size: 14px; }
+
+  /* banners */
+  .banner-h { font-size: clamp(26px, 8vw, 38px); }
+  .banner-sub { font-size: 12px; }
+
+  /* PDP stacks; right pane no longer sticky */
+  .pdp { grid-template-columns: 1fr; }
+  .pdp-right { position: static; height: auto; overflow: visible; }
+  .pdp-left { position: static; }
+
+  /* page shells */
+  .page-wrap { padding: 120px 20px 64px; }
+  .lb-head { min-height: 46vh; padding-top: 120px; }
+
+  /* drawers span most of the screen */
+  .drawer { width: min(400px, 94vw); }
+}
+
+@media (max-width: 520px) {
+  /* collection + search stay 2-up like the reference */
+  .shop-row { grid-template-columns: repeat(2, 1fr); }
+  .shop-title { font-size: clamp(30px, 10vw, 44px); }
+  .filter-bar { padding: 12px var(--pad-x); }
+  .pg-grid { gap: 1px; }
+  .anno { font-size: 11px; padding: 0 32px; text-align: center; }
+  .bag-item { grid-template-columns: 56px 1fr auto; gap: 10px; }
+  .menu-ov-foot { flex-direction: column; gap: 6px; align-items: flex-start; }
+  .search-ov-head { flex-wrap: wrap; }
+}
