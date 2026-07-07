@@ -105,12 +105,12 @@ button, input { font-family: inherit; }
 .sec-head .btn-outline { margin-left: auto; }
 .pg-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--rule); border-top: 1px solid var(--rule); }
 .pg-grid > * { background: var(--bg); }
-.pg-item { animation-duration: 600ms; animation-timing-function: cubic-bezier(0.2, 0.7, 0.2, 1); animation-iteration-count: 1; animation-direction: normal; animation-fill-mode: both; animation-play-state: running; animation-name: pgrise; animation-timeline: auto; animation-range: normal; animation-delay: calc(var(--i) * 100ms); }
-@keyframes pgrise { 
+.pg-item { opacity: 0; transform: translateY(28px); }
+@keyframes pgrise {
   0% { opacity: 0; transform: translateY(28px); }
   100% { opacity: 1; transform: translateY(0px); }
 }
-.pg-visible .pg-item { opacity: 1; transform: translateY(0px); }
+.pg-visible .pg-item { animation: pgrise 600ms cubic-bezier(0.2, 0.7, 0.2, 1) both; animation-delay: calc(var(--i) * 100ms); }
 .section-eye { display: flex; justify-content: space-between; align-items: baseline; padding: 18px 0px; border-bottom: 1px solid var(--rule); margin-bottom: 24px; font-size: 13px; }
 .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--rule); border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); }
 .grid > * { background: var(--bg); }
@@ -1329,3 +1329,6 @@ body:not(.template-index) .nav [data-accent] { color: var(--accent); }
 
 /* account/order rows are links */
 a.order-row:hover .order-id { color: var(--accent); }
+
+/* hero bg gets parallax headroom (JS translates it on scroll) */
+.hero .ph-video-bg { top: -20%; bottom: auto; height: 140%; will-change: transform; }

@@ -32,6 +32,60 @@
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
+  /* ---------- hero choreography (ported from the design) ----------
+     entrance: staggered fade-up on load
+     scroll:   headline/card drift up + fade, marquee sinks, bg parallax */
+  (function heroFX() {
+    var hero = $('.hero .ph-video');
+    if (!hero) return;
+    var bg = hero.querySelector('.ph-video-bg');
+    var eye = hero.querySelector('.hero-overlay-l');
+    var card = hero.querySelector('.hero-overlay-r');
+    var marquee = hero.querySelector('.hero-marquee');
+    var meta = hero.querySelector('.ph-video-meta');
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var entered = reduce;
+    var raf = 0;
+
+    function update() {
+      raf = 0;
+      if (bg) bg.style.transform = 'translateY(' + (window.scrollY * 0.4) + 'px)';
+      if (!entered) return;
+      var h = hero.offsetHeight || window.innerHeight;
+      var p = Math.min(Math.max(window.scrollY / h, 0), 1);
+      var ease = p * p;
+      if (eye) { eye.style.transform = 'translateY(' + (-p * 120) + 'px)'; eye.style.opacity = String(1 - ease * 1.3); }
+      if (card) { card.style.transform = 'translateY(' + (-p * 60) + 'px)'; card.style.opacity = String(1 - ease * 1.3); }
+      if (marquee) { marquee.style.transform = 'translateY(' + (p * 80) + 'px)'; marquee.style.opacity = String(1 - p * 1.1); }
+      if (meta) meta.style.opacity = String(1 - p * 1.4);
+    }
+    window.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(update); }, { passive: true });
+
+    if (reduce) { update(); return; }
+    // entrance
+    function hide(el, dy) { if (el) { el.style.opacity = '0'; el.style.transform = 'translateY(' + dy + 'px)'; } }
+    hide(eye, 40); hide(card, 40);
+    if (marquee) marquee.style.opacity = '0';
+    if (meta) meta.style.opacity = '0';
+    requestAnimationFrame(function () {
+      var ENTER = 'opacity 900ms cubic-bezier(.2,.7,.2,1), transform 900ms cubic-bezier(.2,.7,.2,1)';
+      if (eye) { eye.style.transition = ENTER; eye.style.transitionDelay = '120ms'; }
+      if (card) { card.style.transition = ENTER; card.style.transitionDelay = '320ms'; }
+      if (marquee) { marquee.style.transition = 'opacity 1000ms ease'; marquee.style.transitionDelay = '600ms'; }
+      if (meta) meta.style.transition = 'opacity 1000ms ease';
+      requestAnimationFrame(function () {
+        [eye, card].forEach(function (el) { if (el) { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; } });
+        if (marquee) marquee.style.opacity = '1';
+        if (meta) meta.style.opacity = '1';
+      });
+    });
+    setTimeout(function () {
+      [eye, card, marquee, meta].forEach(function (el) { if (el) { el.style.transition = 'none'; el.style.transitionDelay = '0ms'; } });
+      entered = true;
+      update();
+    }, 1700);
+  })();
+
   /* ---------- overlays ---------- */
   var openKind = null;
   function overlayEl(kind) { return $('[data-overlay="' + kind + '"]'); }

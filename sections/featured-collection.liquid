@@ -5,7 +5,7 @@
 <section class="section" id="section-{{ section.id }}">
   <div class="pg-wrap">
     {%- if section.settings.label != blank or section.settings.sub != blank or section.settings.cta != blank -%}
-      <div class="sec-head">
+      <div class="sec-head sfx-reveal" data-reveal>
         <span class="sec-label">{{ section.settings.label }}</span>
         {%- if section.settings.sub != blank -%}<span class="sec-sub muted">{{ section.settings.sub }}</span>{%- endif -%}
         {%- if section.settings.cta != blank -%}

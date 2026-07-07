@@ -1,5 +1,5 @@
 <section class="colophon">
-  <div class="col-l">
+  <div class="col-l sfx-reveal" data-reveal>
     {%- if section.settings.eyebrow != blank -%}
       <div class="muted small">{{ section.settings.eyebrow }}</div>
     {%- endif -%}
@@ -7,7 +7,7 @@
       <h3>{{ section.settings.heading }}</h3>
     {%- endif -%}
   </div>
-  <div class="col-r muted">
+  <div class="col-r muted sfx-reveal" data-reveal style="transition-delay:150ms">
     {%- if section.settings.body != blank -%}
       {{ section.settings.body }}
     {%- endif -%}
