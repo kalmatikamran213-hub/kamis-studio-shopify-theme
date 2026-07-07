@@ -1,513 +1,315 @@
 /* =========================================================
-   kamis:studio — Shopify theme behaviours
-   - Cart drawer (Ajax API)
-   - Search overlay (predictive)
-   - Variant picker (size + color)
-   - Scroll FX (reveal, parallax, progress)
+   kamis:studio — theme interactions
+   nav scroll · overlays (menu/search/bag/filter) · cart Ajax
+   · predictive search · qty · accordion · variant picker
+   · scroll reveal + parallax
    ========================================================= */
-
-(() => {
-  const $ = (sel, root = document) => root.querySelector(sel);
-  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-  const formatMoney = (cents) => {
-    if (window.Shopify && window.Shopify.formatMoney) {
-      return window.Shopify.formatMoney(cents, window.theme?.moneyFormat || '${{amount}}');
-    }
-    return 'Rs.' + Math.round(cents / 100).toLocaleString();
+(function () {
+  'use strict';
+  var money = function (cents) {
+    try { return window.Shopify.formatMoney(cents, window.theme.moneyFormat); }
+    catch (e) { return 'Rs.' + Math.round(cents / 100).toLocaleString(); }
   };
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
 
-  /* -----------------------------------------------------
-     1. NAV — toggle is-scrolled when scrolled past 80px
-  ----------------------------------------------------- */
-  function initNav() {
-    const nav = $('.nav');
-    if (!nav) return;
-    if (nav.classList.contains('always-solid')) return;
-    const onScroll = () => {
-      if (window.scrollY > 80) nav.classList.add('is-scrolled');
-      else nav.classList.remove('is-scrolled');
-    };
-    onScroll();
-    window.addEventListener('scroll', onScroll, { passive: true });
-  }
+  /* ---------- scroll lock ---------- */
+  var lockCount = 0;
+  function lock() { if (lockCount++ === 0) document.body.style.overflow = 'hidden'; }
+  function unlock() { if (lockCount > 0 && --lockCount === 0) document.body.style.overflow = ''; }
 
-  /* -----------------------------------------------------
-     2. SCROLL PROGRESS BAR
-  ----------------------------------------------------- */
-  function initScrollProgress() {
-    const bar = $('[data-scroll-progress]');
-    if (!bar) return;
-    let raf = 0;
-    const update = () => {
-      const max = (document.documentElement.scrollHeight - window.innerHeight) || 1;
-      const p = Math.max(0, Math.min(1, window.scrollY / max));
-      bar.style.width = (p * 100) + '%';
-    };
-    const onScroll = () => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(update);
-    };
-    update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', update);
-  }
-
-  /* -----------------------------------------------------
-     3. INTERSECTION-OBSERVER REVEAL
-  ----------------------------------------------------- */
-  function initReveals() {
-    const els = $$('[data-reveal]');
-    if (!els.length || !('IntersectionObserver' in window)) {
-      els.forEach(e => e.classList.add('is-in', 'is-shown'));
-      return;
-    }
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('is-in', 'is-shown');
-          io.unobserve(e.target);
-        }
-      });
-    }, { threshold: 0.12 });
-    els.forEach(el => io.observe(el));
-  }
-
-  /* -----------------------------------------------------
-     4. PARALLAX (image translate as element scrolls through viewport)
-     - data-parallax="18"  (strength in px)
-     - data-parallax-feature  (used by editorial features for --parallax)
-  ----------------------------------------------------- */
-  function initParallax() {
-    const els = $$('[data-parallax], [data-parallax-feature]');
-    if (!els.length) return;
-    let ticking = false;
-    const update = () => {
-      const vh = window.innerHeight || 1;
-      els.forEach(el => {
-        const r = el.getBoundingClientRect();
-        const progress = (r.top + r.height / 2 - vh / 2) / vh;
-        const clamped = Math.max(-1.2, Math.min(1.2, progress));
-        if (el.hasAttribute('data-parallax')) {
-          const strength = parseFloat(el.getAttribute('data-parallax')) || 18;
-          el.style.setProperty('--img-parallax', (clamped * strength).toFixed(2));
-        }
-        if (el.hasAttribute('data-parallax-feature')) {
-          const strength = parseFloat(el.getAttribute('data-parallax-feature')) || 60;
-          el.style.setProperty('--parallax', (clamped * strength).toFixed(2));
-        }
-      });
-      ticking = false;
-    };
-    const onScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(update);
-        ticking = true;
-      }
-    };
-    update();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', update);
-  }
-
-  /* -----------------------------------------------------
-     5. ANNOUNCEMENT BAR — close
-  ----------------------------------------------------- */
-  function initAnnoBar() {
-    const bar = $('.anno');
-    const close = $('.anno-close');
-    if (!bar || !close) return;
-    close.addEventListener('click', () => {
-      bar.style.display = 'none';
-      try { localStorage.setItem('kamis_anno_dismissed', '1'); } catch (e) {}
-    });
-    try {
-      if (localStorage.getItem('kamis_anno_dismissed') === '1') {
-        bar.style.display = 'none';
-      }
-    } catch (e) {}
-  }
-
-  /* -----------------------------------------------------
-     6. DRAWERS — open/close
-     Triggers: [data-open="bag|search|menu|filter"]
-  ----------------------------------------------------- */
-  const drawerHost = () => $('#drawer-host');
-  function openDrawer(kind) {
-    const host = drawerHost();
-    const drawer = $(`[data-drawer="${kind}"]`);
-    if (!host || !drawer) return;
-    $$('[data-drawer]', host).forEach(d => d.hidden = true);
-    drawer.hidden = false;
-    host.hidden = false;
-    document.body.style.overflow = 'hidden';
-    if (kind === 'search') {
-      const inp = $('input[data-search-input]', drawer);
-      if (inp) setTimeout(() => inp.focus(), 60);
+  /* ---------- nav scroll state + progress ---------- */
+  var nav = $('[data-header]');
+  var progress = $('[data-scroll-progress]');
+  var alwaysSolid = nav && nav.classList.contains('always-solid');
+  function onScroll() {
+    if (nav && !alwaysSolid) nav.classList.toggle('is-scrolled', window.scrollY > 80);
+    if (progress) {
+      var h = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.width = (h > 0 ? (window.scrollY / h) * 100 : 0) + '%';
     }
   }
-  function closeDrawer() {
-    const host = drawerHost();
-    if (!host) return;
-    host.hidden = true;
-    document.body.style.overflow = '';
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+
+  /* ---------- overlays ---------- */
+  var openKind = null;
+  function overlayEl(kind) { return $('[data-overlay="' + kind + '"]'); }
+  function open(kind) {
+    var el = overlayEl(kind);
+    if (!el) return;
+    close(true);
+    openKind = kind;
+    if (kind === 'menu' || kind === 'search') el.classList.add('is-open');
+    else el.classList.remove('overlay-hidden');
+    el.setAttribute('aria-hidden', 'false');
+    lock();
+    if (kind === 'search') { var i = $('[data-search-input]', el); if (i) setTimeout(function () { i.focus(); }, 120); }
+    syncFab();
   }
-  function initDrawers() {
-    document.addEventListener('click', (e) => {
-      const opener = e.target.closest('[data-open]');
-      if (opener) {
-        e.preventDefault();
-        openDrawer(opener.dataset.open);
-        return;
-      }
-      const closer = e.target.closest('[data-close]');
-      if (closer) {
-        e.preventDefault();
-        closeDrawer();
-        return;
-      }
-      // click on backdrop
-      if (e.target.matches('.overlay')) closeDrawer();
-    });
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeDrawer();
-    });
+  function close(silent) {
+    if (!openKind) { return; }
+    var el = overlayEl(openKind);
+    if (el) {
+      el.classList.remove('is-open');
+      el.classList.add('overlay-hidden');
+      el.setAttribute('aria-hidden', 'true');
+    }
+    openKind = null;
+    unlock();
+    syncFab();
+  }
+  document.addEventListener('click', function (e) {
+    var opener = e.target.closest('[data-open]');
+    if (opener) { e.preventDefault(); open(opener.getAttribute('data-open')); return; }
+    if (e.target.closest('[data-close]')) { e.preventDefault(); close(); return; }
+    var ov = e.target.closest('.overlay');
+    if (ov && e.target === ov) close();
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+
+  /* ---------- bag fab ---------- */
+  var fab = $('[data-bag-fab]');
+  function syncFab() {
+    if (!fab) return;
+    var count = cartState ? cartState.item_count : 0;
+    if (count > 0 && openKind !== 'bag') {
+      fab.hidden = false;
+      fab.textContent = 'bag · ' + count + ' · ' + money(cartState.total_price);
+      fab.setAttribute('data-open', 'bag');
+    } else { fab.hidden = true; }
   }
 
-  /* -----------------------------------------------------
-     7. CART (Shopify Ajax API)
-  ----------------------------------------------------- */
-  async function fetchCart() {
-    const r = await fetch('/cart.js', { headers: { Accept: 'application/json' } });
-    return r.json();
+  /* ---------- cart ---------- */
+  var cartState = null;
+  var ROUTES = window.theme.routes;
+  function setCount(n) { $$('[data-bag-count]').forEach(function (el) { el.textContent = '(' + n + ')'; }); }
+  function fetchCart() {
+    return fetch(ROUTES.cart + '.js', { headers: { 'Accept': 'application/json' } })
+      .then(function (r) { return r.json(); })
+      .then(function (c) { cartState = c; renderCart(); return c; });
   }
-  async function addToCart({ id, quantity = 1, properties = {} }) {
-    const r = await fetch('/cart/add.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ items: [{ id, quantity, properties }] }),
-    });
-    if (!r.ok) {
-      const err = await r.json();
-      throw new Error(err.description || err.message || 'Could not add');
-    }
-    return r.json();
+  function cartAdd(id, qty) {
+    return fetch(ROUTES.cart_add, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ id: id, quantity: qty || 1 })
+    }).then(function (r) { return r.json(); }).then(function () { return fetchCart(); });
   }
-  async function changeCart({ line, quantity }) {
-    const r = await fetch('/cart/change.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ line, quantity }),
-    });
-    return r.json();
+  function cartChange(line, qty) {
+    return fetch(ROUTES.cart_change, {
+      method: 'POST', headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({ line: line, quantity: qty })
+    }).then(function (r) { return r.json(); }).then(function (c) { cartState = c; renderCart(); return c; });
   }
-  function renderCart(cart) {
-    // Bag count in nav
-    $$('[data-bag-count]').forEach(el => { el.textContent = '(' + cart.item_count + ')'; });
-    // FAB
-    const fab = $('[data-bag-fab]');
-    if (fab) {
-      if (cart.item_count > 0) {
-        fab.hidden = false;
-        fab.textContent = `bag · ${cart.item_count} · ${formatMoney(cart.total_price)}`;
-      } else {
-        fab.hidden = true;
-      }
-    }
-    // Drawer body
-    const body = $('[data-drawer="bag"] .drawer-body');
+  function renderCart() {
+    var body = $('[data-cart-body]');
+    setCount(cartState.item_count);
+    syncFab();
     if (!body) return;
-    if (cart.item_count === 0) {
-      body.innerHTML = `
-        <div class="empty">
-          <p>your bag is empty.</p>
-          <p class="muted">drop:one of spring:summer '26 is now live.</p>
-          <button class="btn-outline dark" data-close>see:more</button>
-        </div>`;
+    var threshold = parseInt(body.getAttribute('data-threshold'), 10) || 2500000;
+    var shopAll = ROUTES.cart.replace(/\/cart$/, '') + '/collections/all';
+    if (cartState.item_count === 0) {
+      body.innerHTML =
+        '<div class="empty"><p>your bag is empty.</p>' +
+        '<p class="muted">drop:one of spring:summer \'26 is now live.</p>' +
+        '<a class="btn-outline dark" href="' + shopAll + '">shop drop:one</a></div>';
       return;
     }
-    const itemsHtml = cart.items.map((it, i) => `
-      <li class="bag-item" data-line="${i + 1}">
-        <img src="${it.image || ''}" alt="" />
-        <div class="bag-meta">
-          <div class="bag-name">${escapeHtml(it.product_title)}</div>
-          <div class="bag-variant">${escapeHtml(it.variant_title || '')}</div>
-          <div class="bag-price">${formatMoney(it.final_line_price)}</div>
-          <div class="qty" style="margin-top:6px">
-            <button data-qty="dec" aria-label="decrease">−</button>
-            <input value="${it.quantity}" type="number" min="0" />
-            <button data-qty="inc" aria-label="increase">+</button>
-          </div>
-        </div>
-        <button class="linklike small" data-remove>remove</button>
-      </li>
-    `).join('');
-    body.innerHTML = `
-      <ul class="bag-list">${itemsHtml}</ul>
-      <div class="bag-foot">
-        <div class="bag-sub"><span>subtotal</span><span>${formatMoney(cart.total_price)}</span></div>
-        <a class="btn-fill" href="/checkout" style="display:block;text-align:center;text-decoration:none">checkout</a>
-        <p class="muted small">shipping & taxes calculated at checkout.</p>
-      </div>
-    `;
-  }
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, m => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m]));
-  }
-  function bindCartActions() {
-    document.addEventListener('click', async (e) => {
-      // Add to cart from a product form
-      const addBtn = e.target.closest('[data-add-to-cart]');
-      if (addBtn) {
-        e.preventDefault();
-        const form = addBtn.closest('form');
-        if (!form) return;
-        const id = form.querySelector('[name="id"]')?.value;
-        const qty = parseInt(form.querySelector('[name="quantity"]')?.value || '1', 10);
-        if (!id) return;
-        addBtn.disabled = true;
-        const oldText = addBtn.textContent;
-        addBtn.textContent = 'adding…';
-        try {
-          await addToCart({ id, quantity: qty });
-          const cart = await fetchCart();
-          renderCart(cart);
-          openDrawer('bag');
-          addBtn.textContent = '+ added';
-          setTimeout(() => { addBtn.textContent = oldText; addBtn.disabled = false; }, 1200);
-        } catch (err) {
-          addBtn.textContent = 'unavailable';
-          setTimeout(() => { addBtn.textContent = oldText; addBtn.disabled = false; }, 1500);
-        }
-        return;
-      }
-      // Quantity changes inside drawer
-      const qtyBtn = e.target.closest('[data-qty]');
-      if (qtyBtn) {
-        const item = qtyBtn.closest('[data-line]');
-        if (!item) return;
-        const line = parseInt(item.dataset.line, 10);
-        const inp = item.querySelector('input');
-        const cur = parseInt(inp.value || '1', 10);
-        const next = qtyBtn.dataset.qty === 'inc' ? cur + 1 : Math.max(0, cur - 1);
-        const cart = await changeCart({ line, quantity: next });
-        renderCart(cart);
-        return;
-      }
-      const rem = e.target.closest('[data-remove]');
-      if (rem) {
-        const item = rem.closest('[data-line]');
-        if (!item) return;
-        const line = parseInt(item.dataset.line, 10);
-        const cart = await changeCart({ line, quantity: 0 });
-        renderCart(cart);
-        return;
-      }
+    var toFree = threshold - cartState.total_price;
+    var pct = Math.min(100, (cartState.total_price / threshold) * 100);
+    var html = '<div class="ship-progress"><span class="small">' +
+      (toFree > 0 ? 'add ' + money(toFree) + ' for free shipping' : '✓ free shipping unlocked') +
+      '</span><div class="ship-bar"><div class="ship-fill" style="width:' + pct + '%"></div></div></div><ul class="bag-list">';
+    cartState.items.forEach(function (it, i) {
+      var img = it.image ? '<img src="' + it.image + '" alt="">' : '';
+      var variant = (it.variant_title && it.variant_title.indexOf('Default') === -1) ? it.variant_title.toLowerCase() : '';
+      html += '<li class="bag-item" data-line="' + (i + 1) + '">' +
+        '<a href="' + it.url + '">' + img + '</a>' +
+        '<div class="bag-meta"><div class="bag-name">' + it.product_title.toLowerCase() + '</div>' +
+        '<div class="bag-variant">' + variant + '</div>' +
+        '<div class="bag-price">' + money(it.final_price) + '</div>' +
+        '<div class="qty-row"><button class="qty-btn" type="button" data-qty-down>−</button>' +
+        '<span class="qty-num">' + it.quantity + '</span>' +
+        '<button class="qty-btn" type="button" data-qty-up>+</button></div></div>' +
+        '<button class="linklike small" type="button" data-remove>remove</button></li>';
     });
-    // Quantity input typed change
-    document.addEventListener('change', async (e) => {
-      const inp = e.target.closest('[data-line] input');
-      if (!inp) return;
-      const item = inp.closest('[data-line]');
-      const line = parseInt(item.dataset.line, 10);
-      const next = Math.max(0, parseInt(inp.value || '0', 10));
-      const cart = await changeCart({ line, quantity: next });
-      renderCart(cart);
+    html += '</ul><div class="bag-foot"><div class="bag-sub"><span>subtotal</span><span>' +
+      money(cartState.total_price) + '</span></div>' +
+      '<a class="btn-fill" href="' + ROUTES.cart + '">checkout</a>' +
+      '<p class="muted small">shipping &amp; taxes calculated at checkout.</p></div>';
+    body.innerHTML = html;
+  }
+
+  // add-to-cart forms (quick add + PDP)
+  document.addEventListener('submit', function (e) {
+    var form = e.target.closest('[data-quick-add], [data-product-form]');
+    if (!form) return;
+    e.preventDefault();
+    var id = (form.querySelector('[name="id"]') || {}).value;
+    if (!id) return;
+    var btn = form.querySelector('button[type="submit"]');
+    var label = btn ? btn.textContent : '';
+    if (btn) { btn.disabled = true; btn.textContent = 'adding…'; }
+    cartAdd(id, 1).then(function () {
+      if (btn) { btn.disabled = false; btn.textContent = label; }
+      open('bag');
+    }).catch(function () { if (btn) { btn.disabled = false; btn.textContent = label; } });
+  });
+
+  // qty steppers + remove
+  document.addEventListener('click', function (e) {
+    var li = e.target.closest('.bag-item'); if (!li) return;
+    var line = parseInt(li.getAttribute('data-line'), 10);
+    var qEl = li.querySelector('.qty-num');
+    var q = qEl ? parseInt(qEl.textContent, 10) : 1;
+    if (e.target.closest('[data-qty-up]')) cartChange(line, q + 1);
+    else if (e.target.closest('[data-qty-down]')) cartChange(line, Math.max(0, q - 1));
+    else if (e.target.closest('[data-remove]')) cartChange(line, 0);
+  });
+
+  /* ---------- predictive search ---------- */
+  var searchInput = $('[data-search-input]');
+  if (searchInput) {
+    var pop = $('[data-search-popular]');
+    var res = $('[data-search-results]');
+    var grid = $('[data-search-grid]');
+    var countEl = $('[data-search-count]');
+    var t;
+    function runSearch(q) {
+      q = q.trim();
+      if (!q) { if (pop) pop.hidden = false; if (res) res.hidden = true; return; }
+      if (pop) pop.hidden = true; if (res) res.hidden = false;
+      fetch(ROUTES.search + '/suggest.json?q=' + encodeURIComponent(q) +
+        '&resources[type]=product&resources[limit]=8')
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          var items = (d.resources && d.resources.results && d.resources.results.products) || [];
+          if (countEl) countEl.textContent = items.length + ' result' + (items.length === 1 ? '' : 's') + ' for “' + q + '”';
+          if (!grid) return;
+          if (!items.length) { grid.innerHTML = '<div class="empty" style="padding:48px 0"><p>nothing found for “' + q + '”.</p><p class="muted">try “hoodie”, “cap”, or “trouser”.</p></div>'; return; }
+          grid.innerHTML = items.map(function (p) {
+            var img = p.featured_image && p.featured_image.url ? '<img src="' + p.featured_image.url + '" alt="">' : '<img alt="">';
+            return '<a class="search-card" href="' + p.url + '">' + img +
+              '<div class="search-card-meta"><span class="search-card-name">' + p.title.toLowerCase() + '</span>' +
+              '<span class="muted small">' + (p.type || '').toLowerCase() + '</span>' +
+              '<span class="search-card-price">' + (p.price ? money(p.price) : '') + '</span></div></a>';
+          }).join('');
+        }).catch(function () {});
+    }
+    searchInput.addEventListener('input', function () { clearTimeout(t); var v = this.value; t = setTimeout(function () { runSearch(v); }, 180); });
+    $$('[data-search-chip]').forEach(function (c) {
+      c.addEventListener('click', function () { searchInput.value = c.textContent; runSearch(c.textContent); searchInput.focus(); });
     });
   }
 
-  /* -----------------------------------------------------
-     8. PREDICTIVE SEARCH
-  ----------------------------------------------------- */
-  function initSearch() {
-    const inp = document.querySelector('input[data-search-input]');
-    if (!inp) return;
-    const out = document.querySelector('[data-search-results]');
-    let t = 0;
-    inp.addEventListener('input', () => {
-      clearTimeout(t);
-      const q = inp.value.trim();
-      if (!q) { if (out) out.innerHTML = ''; return; }
-      t = setTimeout(async () => {
-        try {
-          const r = await fetch(`/search/suggest.json?q=${encodeURIComponent(q)}&resources[type]=product&resources[limit]=6`);
-          const data = await r.json();
-          const items = data?.resources?.results?.products || [];
-          if (!out) return;
-          if (!items.length) {
-            out.innerHTML = `<p class="muted small" style="padding:8px 0">no results for "${escapeHtml(q)}"</p>`;
-            return;
-          }
-          out.innerHTML = items.map(p => `
-            <a class="search-result" href="${p.url}">
-              <img src="${p.image || ''}" alt="" />
-              <div>
-                <div class="search-result-name">${escapeHtml(p.title)}</div>
-                <div class="search-result-meta">${escapeHtml(p.vendor || '')}</div>
-              </div>
-              <div class="search-result-meta">${p.price ? formatMoney(p.price * 100) : ''}</div>
-            </a>
-          `).join('');
-        } catch (e) {}
-      }, 220);
-    });
+  /* ---------- announcement dismiss ---------- */
+  var anno = $('.anno');
+  if (anno) {
+    var key = 'kamis:anno';
+    var closer = anno.querySelector('.anno-close');
+    try { if (localStorage.getItem(key) === '1') anno.style.display = 'none'; } catch (e) {}
+    if (closer) closer.addEventListener('click', function () { anno.style.display = 'none'; try { localStorage.setItem(key, '1'); } catch (e) {} });
   }
 
-  /* -----------------------------------------------------
-     9. PRODUCT VARIANTS (size + color picker on PDP)
-  ----------------------------------------------------- */
-  function initVariantPicker() {
-    const pdp = document.querySelector('[data-product]');
-    if (!pdp) return;
-    let variants;
-    try { variants = JSON.parse(pdp.querySelector('[data-product-json]')?.textContent || '[]'); } catch (e) { return; }
-    const optionMap = {}; // index -> selected value
-    pdp.querySelectorAll('[data-option]').forEach(el => {
-      const idx = parseInt(el.dataset.optionIndex, 10);
-      if (el.classList.contains('is-active')) optionMap[idx] = el.dataset.option;
+  /* ---------- accordions (PDP + FAQ) ---------- */
+  document.addEventListener('click', function (e) {
+    var h = e.target.closest('.acc-h, .faq-h'); if (!h) return;
+    var body = h.nextElementSibling;
+    var isOpen = h.getAttribute('aria-expanded') === 'true';
+    h.setAttribute('aria-expanded', String(!isOpen));
+    if (body) body.classList.toggle('open', !isOpen);
+    var icon = h.querySelector('.acc-icon, .faq-icon'); if (icon) icon.textContent = isOpen ? '+' : '−';
+  });
+
+  /* ---------- card hover (quick add) ---------- */
+  $$('[data-card]').forEach(function (card) {
+    var quick = card.querySelector('.card-quick');
+    card.addEventListener('mouseenter', function () { card.classList.add('is-hover'); if (quick) quick.classList.add('show'); });
+    card.addEventListener('mouseleave', function () { card.classList.remove('is-hover'); if (quick) quick.classList.remove('show'); });
+  });
+
+  /* ---------- collection view toggle (product / look) ---------- */
+  $$('.seg-btn[data-view]').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var v = btn.getAttribute('data-view');
+      $$('.seg-btn').forEach(function (b) { b.classList.toggle('is-active', b === btn); });
+      $$('.shop-stream').forEach(function (s) { s.setAttribute('data-view', v); });
     });
+  });
 
-    const cta = pdp.querySelector('[data-add-to-cart]');
-    const idInput = pdp.querySelector('[name="id"]');
-    const priceEl = pdp.querySelector('[data-product-price]');
-    const colorName = pdp.querySelector('[data-color-name]');
-
-    function updateVariant() {
-      const sel = Object.keys(optionMap).map(k => optionMap[k]);
-      const match = variants.find(v => {
-        for (let i = 0; i < sel.length; i++) {
-          if (v.options[i] !== sel[i]) return false;
-        }
-        return true;
+  /* ---------- variant picker (PDP) ---------- */
+  $$('[data-product]').forEach(function (root) {
+    var dataEl = root.querySelector('[data-product-json]');
+    if (!dataEl) return;
+    var variants; try { variants = JSON.parse(dataEl.textContent); } catch (e) { return; }
+    var selected = {};
+    $$('.pdp-swatch[data-option-index], .pdp-size[data-option-index]', root).forEach(function (b) {
+      if (b.classList.contains('is-active')) selected[b.getAttribute('data-option-index')] = b.getAttribute('data-option');
+    });
+    function match() {
+      return variants.find(function (v) {
+        return Object.keys(selected).every(function (i) { return v.options[i] === selected[i]; });
       });
-      if (!match) {
-        if (cta) { cta.textContent = 'unavailable'; cta.disabled = true; cta.classList.remove('btn-fill'); cta.classList.add('btn-outline','dark'); }
-        return;
-      }
-      if (idInput) idInput.value = match.id;
-      if (priceEl) priceEl.textContent = formatMoney(match.price);
-      if (cta) {
-        cta.disabled = false;
-        if (match.available) {
-          // Only show "+ add to bag" if a size has been picked (size is option 1 typically)
-          const sizePicked = pdp.querySelector('[data-option-index="1"][data-option].is-active') || pdp.querySelector('[data-option-index="0"][data-option].is-active');
-          if (pdp.dataset.requireSize === 'true' && !sizePicked) {
-            cta.textContent = 'select size';
-            cta.classList.remove('btn-fill');
-            cta.classList.add('btn-outline','dark');
-          } else {
-            cta.textContent = '+ add to bag';
-            cta.classList.add('btn-fill');
-            cta.classList.remove('btn-outline','dark');
-          }
-        } else {
-          cta.textContent = 'sold out';
-          cta.disabled = true;
-          cta.classList.remove('btn-fill');
-          cta.classList.add('btn-outline','dark');
-        }
+    }
+    function update() {
+      var v = match();
+      var idInput = root.querySelector('[name="id"]');
+      var priceEl = root.querySelector('[data-product-price]');
+      var cta = root.querySelector('[data-add-to-cart]');
+      if (v) {
+        if (idInput) idInput.value = v.id;
+        if (priceEl) priceEl.textContent = money(v.price);
+        if (cta) { cta.disabled = !v.available; if (!v.available) cta.textContent = 'sold out'; else if (cta.textContent === 'sold out') cta.textContent = 'add to bag'; }
       }
     }
-
-    pdp.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-option]');
-      if (!btn) return;
-      e.preventDefault();
-      if (btn.classList.contains('is-out') || btn.disabled) return;
-      const idx = parseInt(btn.dataset.optionIndex, 10);
-      pdp.querySelectorAll(`[data-option-index="${idx}"]`).forEach(b => b.classList.remove('is-active'));
-      btn.classList.add('is-active');
-      optionMap[idx] = btn.dataset.option;
-      if (idx === 0 && colorName) colorName.textContent = btn.dataset.option;
-      updateVariant();
+    root.addEventListener('click', function (e) {
+      var opt = e.target.closest('[data-option-index]'); if (!opt) return;
+      var idx = opt.getAttribute('data-option-index');
+      selected[idx] = opt.getAttribute('data-option');
+      var group = opt.classList.contains('pdp-size') ? '.pdp-size' : '.pdp-swatch';
+      $$(group + '[data-option-index="' + idx + '"]', root).forEach(function (b) { b.classList.toggle('is-active', b === opt); });
+      var nameEl = root.querySelector('[data-color-name]');
+      if (group === '.pdp-swatch' && nameEl) nameEl.textContent = (opt.getAttribute('data-option') || '').toLowerCase();
+      update();
     });
+    update();
+  });
 
-    updateVariant();
-  }
-
-  /* -----------------------------------------------------
-     10. ACCORDION
-  ----------------------------------------------------- */
-  function initAccordion() {
-    document.addEventListener('click', (e) => {
-      const head = e.target.closest('.acc-h');
-      if (!head) return;
-      const row = head.closest('.acc-row');
-      const body = row.querySelector('.acc-body');
-      const icon = head.querySelector('.acc-icon');
-      const isOpen = body.classList.contains('open');
-      // close siblings
-      row.parentElement.querySelectorAll('.acc-body.open').forEach(b => b.classList.remove('open'));
-      row.parentElement.querySelectorAll('.acc-h .acc-icon').forEach(i => i.textContent = '+');
-      if (!isOpen) {
-        body.classList.add('open');
-        if (icon) icon.textContent = '×';
-      }
-    });
-  }
-
-  /* -----------------------------------------------------
-     11. SHOP VIEW TOGGLE (product / look)
-  ----------------------------------------------------- */
-  function initShopViewToggle() {
-    const stream = document.querySelector('.shop-stream');
-    if (!stream) return;
-    document.addEventListener('click', (e) => {
-      const btn = e.target.closest('[data-view]');
-      if (!btn) return;
-      const view = btn.dataset.view;
-      stream.dataset.view = view;
-      document.querySelectorAll('[data-view]').forEach(b => b.classList.toggle('is-active', b.dataset.view === view));
-      // swap each card's primary image source between product/look variants
-      document.querySelectorAll('[data-card-img]').forEach(img => {
-        const next = img.dataset[view] || img.dataset.product || img.src;
-        if (next && img.src !== next) {
-          img.classList.remove('view-fade');
-          void img.offsetWidth; // restart animation
-          img.classList.add('view-fade');
-          img.src = next;
-        }
+  /* ---------- scroll reveal ---------- */
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        var t = en.target;
+        t.classList.add('is-in', 'is-visible');
+        if (t.classList.contains('pg-grid')) t.classList.add('pg-visible');
+        io.unobserve(t);
       });
-    });
+    }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
+    $$('.sfx-reveal, .pg-reveal, [data-reveal], .pg-grid').forEach(function (el) { io.observe(el); });
+  } else {
+    $$('.sfx-reveal, .pg-reveal, [data-reveal]').forEach(function (el) { el.classList.add('is-in'); });
+    $$('.pg-grid').forEach(function (el) { el.classList.add('pg-visible'); });
   }
 
-  /* -----------------------------------------------------
-     12. NEWSLETTER FORM (uses theme localized success message)
-  ----------------------------------------------------- */
-  function initNewsletter() {
-    document.addEventListener('submit', (e) => {
-      const form = e.target.closest('.news');
-      if (!form) return;
-      // let Shopify handle real signup if action set; otherwise just give feedback
-      if (!form.action || form.action === '' || form.action === window.location.href) {
-        e.preventDefault();
-        const inp = form.querySelector('input');
-        if (inp && inp.value) {
-          form.insertAdjacentHTML('afterend', '<p class="news-thanks">thanks — you\'re on the list.</p>');
-          form.style.display = 'none';
-        }
-      }
-    });
+  /* ---------- parallax (lookbook + hero bg) ---------- */
+  var parallaxEls = $$('[data-parallax]');
+  if (parallaxEls.length) {
+    var praf = 0;
+    function ptick() {
+      praf = 0;
+      var vh = window.innerHeight;
+      parallaxEls.forEach(function (el) {
+        var r = el.getBoundingClientRect();
+        if (r.bottom < 0 || r.top > vh) return;
+        var prog = (r.top + r.height / 2 - vh / 2) / vh;
+        el.style.setProperty('--img-parallax', (-prog * 40).toFixed(1));
+      });
+    }
+    window.addEventListener('scroll', function () { if (!praf) praf = requestAnimationFrame(ptick); }, { passive: true });
+    ptick();
   }
 
-  /* -----------------------------------------------------
-     INIT
-  ----------------------------------------------------- */
-  function init() {
-    initNav();
-    initScrollProgress();
-    initReveals();
-    initParallax();
-    initAnnoBar();
-    initDrawers();
-    bindCartActions();
-    initSearch();
-    initVariantPicker();
-    initAccordion();
-    initShopViewToggle();
-    initNewsletter();
-    // Pre-populate cart drawer state
-    fetchCart().then(renderCart).catch(() => {});
-  }
-  if (document.readyState !== 'loading') init();
-  else document.addEventListener('DOMContentLoaded', init);
+  /* ---------- init ---------- */
+  fetchCart();
 })();

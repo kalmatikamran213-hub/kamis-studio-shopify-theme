@@ -1,0 +1,29 @@
+{%- comment -%}
+  Fullscreen search overlay. Predictive results filled by theme.js via
+  Shopify's /search/suggest.json. Mirrors the Kamis Studio design.
+{%- endcomment -%}
+<div class="search-ov" data-overlay="search" aria-hidden="true">
+  <div class="search-ov-head">
+    <form action="{{ routes.search_url }}" method="get" role="search" style="flex:1;display:flex" data-search-form>
+      <input type="text" name="q" class="search-big" data-search-input
+             placeholder="search products, drops, materials…"
+             autocomplete="off" aria-label="search">
+    </form>
+    <button class="menu-close dark" type="button" data-close aria-label="close search">close ×</button>
+  </div>
+
+  <div class="search-pop" data-search-popular>
+    <span class="muted small">popular searches</span>
+    <div class="search-chips">
+      {%- assign pops = settings.popular_searches | default: 'varsity jacket, hoodie, wide leg trouser, monogram cap, denim' | split: ',' -%}
+      {%- for p in pops -%}
+        <button class="chip" type="button" data-search-chip>{{ p | strip }}</button>
+      {%- endfor -%}
+    </div>
+  </div>
+
+  <div class="search-results" data-search-results hidden>
+    <span class="muted small" data-search-count></span>
+    <div class="search-grid" data-search-grid></div>
+  </div>
+</div>

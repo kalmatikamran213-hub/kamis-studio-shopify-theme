@@ -139,9 +139,9 @@
   </div>
 </section>
 
-{%- comment -%} Filter drawer {%- endcomment -%}
-<div data-filter-drawer-tmpl style="display:none">
-  <aside class="drawer" onclick="event.stopPropagation()">
+{%- comment -%} Filter drawer — self-contained overlay toggled by theme.js {%- endcomment -%}
+<div class="overlay overlay-hidden" data-overlay="filter" aria-hidden="true">
+  <aside class="drawer" data-drawer-shell onclick="event.stopPropagation()">
     <header class="drawer-h">
       <span>{{ 'collections.general.filter' | t }}</span>
       <button type="button" data-close aria-label="close">×</button>
@@ -180,9 +180,6 @@
 </div>
 <script>
   (function(){
-    var src = document.querySelector('[data-filter-drawer-tmpl] aside');
-    var slot = document.querySelector('#drawer-host [data-drawer="filter"]');
-    if (src && slot) slot.appendChild(src.cloneNode(true));
     document.addEventListener('change', function(e){
       var r = e.target.closest('input[name="sort_by"]');
       if (!r) return;

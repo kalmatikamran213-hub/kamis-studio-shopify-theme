@@ -1,0 +1,70 @@
+{%- comment -%}
+  Fullscreen menu overlay — big numbered links + categories + saved.
+  Toggled by theme.js (adds .is-open). Mirrors the Kamis Studio design.
+{%- endcomment -%}
+{%- assign menu = linklists[settings.overlay_menu] | default: linklists['main-menu'] -%}
+<div class="menu-ov" data-overlay="menu" aria-hidden="true">
+  <div class="menu-ov-head">
+    <span class="muted-inv small">{{ shop.name }} — {{ settings.season_note | default: "spring:summer '26" }}</span>
+    <button class="menu-close" type="button" data-close aria-label="close menu">close ×</button>
+  </div>
+
+  <div class="menu-ov-body">
+    <nav class="menu-main">
+      {%- if menu != blank and menu.links.size > 0 -%}
+        {%- for link in menu.links limit: 6 -%}
+          <a href="{{ link.url }}" class="menu-link" style="--i: {{ forloop.index0 }}">
+            <span class="menu-num">0{{ forloop.index }}</span>
+            <span class="menu-label">{{ link.title | downcase }}</span>
+            <span class="menu-sub">{{ link.levels | default: '' }}</span>
+            <span class="menu-arrow" aria-hidden="true">→</span>
+          </a>
+        {%- endfor -%}
+      {%- else -%}
+        {%- assign fallback = 'shop,lookbook,account,contact' | split: ',' -%}
+        {%- assign fsub = '24 pieces,editorial,members,studio' | split: ',' -%}
+        {%- assign furl = routes.all_products_collection_url | append: '|/pages/lookbook|/account|/pages/contact' | split: '|' -%}
+        {%- for l in fallback -%}
+          <a href="{{ furl[forloop.index0] }}" class="menu-link" style="--i: {{ forloop.index0 }}">
+            <span class="menu-num">0{{ forloop.index }}</span>
+            <span class="menu-label">{{ l }}</span>
+            <span class="menu-sub">{{ fsub[forloop.index0] }}</span>
+            <span class="menu-arrow" aria-hidden="true">→</span>
+          </a>
+        {%- endfor -%}
+      {%- endif -%}
+    </nav>
+
+    <aside class="menu-side">
+      <div class="menu-side-block" style="--i: 2">
+        <h5>categories</h5>
+        <ul>
+          {%- assign cats = collections | where: 'products_count' -%}
+          {%- if cats.size > 0 -%}
+            {%- for c in collections limit: 8 -%}
+              {%- unless c.handle == 'frontpage' -%}
+                <li><a href="{{ c.url }}">{{ c.title | downcase }}</a></li>
+              {%- endunless -%}
+            {%- endfor -%}
+          {%- else -%}
+            {%- assign demo = 'tops,hoodies,knitwear,outerwear,legwear,headwear,accessories,footwear' | split: ',' -%}
+            {%- for c in demo -%}<li><a href="{{ routes.all_products_collection_url }}?filter.p.tag={{ c }}">{{ c }}</a></li>{%- endfor -%}
+          {%- endif -%}
+        </ul>
+      </div>
+      <div class="menu-side-block" style="--i: 4">
+        <h5>saved</h5>
+        <ul>
+          <li><a href="/account#wishlist">wishlist</a></li>
+          <li><a href="{{ routes.cart_url }}">bag &amp; checkout</a></li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+
+  <div class="menu-ov-foot">
+    <span>{{ settings.contact_email | default: 'studio@kamis.studio' }}</span>
+    <span>{{ settings.social_line | default: 'instagram · tiktok · pinterest' }}</span>
+    <span>{{ settings.cities_line | default: 'lahore · paris · new york' }}</span>
+  </div>
+</div>

@@ -1,0 +1,12 @@
+node_modules/
+design_src/
+design-new.html
+design-src.css
+rendered.html
+render-info.json
+routes.json
+*.mjs
+unpack.py
+package.json
+package-lock.json
+.DS_Store

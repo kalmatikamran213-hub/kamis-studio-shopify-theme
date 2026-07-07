@@ -94,7 +94,7 @@
           </div>
         {%- endif -%}
 
-        <form method="post" action="{{ routes.cart_add_url }}" id="product-form-{{ section.id }}" novalidate>
+        <form method="post" action="{{ routes.cart_add_url }}" id="product-form-{{ section.id }}" data-product-form novalidate>
           <input type="hidden" name="id" value="{{ current_variant.id }}">
           <input type="hidden" name="quantity" value="1">
           <button type="submit" class="{% if size_option %}btn-outline dark{% else %}btn-fill{% endif %} pdp-cta" data-add-to-cart>

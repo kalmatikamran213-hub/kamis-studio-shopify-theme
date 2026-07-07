@@ -1,0 +1,16 @@
+{
+  "sections": {
+    "lookbook": {
+      "type": "lookbook",
+      "blocks": {
+        "b1": { "type": "full", "settings": { "caption": "reversible satin jacket · ecru/black" } },
+        "b2": { "type": "split", "settings": { "caption": "the 2.0 hoodie · navy" } },
+        "b3": { "type": "statement", "settings": { "text": "every visual, art-directed and human-finished by kamis studio." } },
+        "b4": { "type": "split", "settings": { "flipped": true, "caption": "tailored wide leg · four colours" } },
+        "b5": { "type": "full", "settings": { "caption": "bespoke headwear · best sellers" } }
+      },
+      "block_order": ["b1", "b2", "b3", "b4", "b5"]
+    }
+  },
+  "order": ["lookbook"]
+}

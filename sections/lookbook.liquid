@@ -1,0 +1,127 @@
+{%- comment -%}
+  Lookbook — editorial stream of full-bleed and split image blocks.
+  Matches the Kamis Studio design. All content editable via blocks.
+{%- endcomment -%}
+<div class="lb-head" data-parallax-host>
+  <span class="page-eyebrow">{{ section.settings.eyebrow | default: 'lookbook' }}</span>
+  <h1 class="page-title">{{ section.settings.title | default: "spring:summer '26" }}</h1>
+  <div class="lb-meta">
+    <span>{{ section.settings.meta_a | default: 'drop:one' }}</span>
+    <span>{{ section.settings.meta_b | default: 'ai-crafted editorial' }}</span>
+    <span>{{ section.settings.meta_c | default: 'lahore · paris · new york' }}</span>
+  </div>
+</div>
+
+<div class="lb-stream">
+  {%- for block in section.blocks -%}
+    {%- case block.type -%}
+
+      {%- when 'full' -%}
+        <div class="lb-block lb-full pg-reveal" {{ block.shopify_attributes }}>
+          <div class="lb-par" data-parallax>
+            {%- if block.settings.image -%}
+              <img src="{{ block.settings.image | image_url: width: 2200 }}" alt="{{ block.settings.caption | escape }}" style="width:100%;height:112%;object-fit:cover">
+            {%- else -%}
+              {% render 'striped-placeholder', label: block.settings.caption | default: 'look · full bleed', sub: 'upload image', bg: '#EFEDE8', fg: '#D9D5CC' %}
+            {%- endif -%}
+          </div>
+          {%- if block.settings.caption != blank -%}
+            <div class="lb-caption">
+              <span class="lb-num">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+              <span>{{ block.settings.caption }}</span>
+              {%- if block.settings.link_product != blank -%}
+                {%- assign lp = all_products[block.settings.link_product] -%}
+                <a href="{{ lp.url }}">shop the look →</a>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        </div>
+
+      {%- when 'split' -%}
+        <div class="lb-block pg-reveal" {{ block.shopify_attributes }}>
+          <div class="lb-split{% if block.settings.flipped %} is-flipped{% endif %}">
+            <div class="lb-par" data-parallax>
+              {%- if block.settings.image_a -%}
+                <img src="{{ block.settings.image_a | image_url: width: 1600 }}" alt="" style="width:100%;height:112%;object-fit:cover">
+              {%- else -%}
+                {% render 'striped-placeholder', label: 'look · left', sub: 'upload image', bg: '#E6E8EB', fg: '#CFD3D8' %}
+              {%- endif -%}
+            </div>
+            <div class="lb-par" data-parallax>
+              {%- if block.settings.image_b -%}
+                <img src="{{ block.settings.image_b | image_url: width: 1200 }}" alt="" style="width:100%;height:112%;object-fit:cover">
+              {%- else -%}
+                {% render 'striped-placeholder', label: 'look · right', sub: 'upload image', bg: '#EAE6DC', fg: '#D5CFC2' %}
+              {%- endif -%}
+            </div>
+          </div>
+          {%- if block.settings.caption != blank -%}
+            <div class="lb-caption">
+              <span class="lb-num">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</span>
+              <span>{{ block.settings.caption }}</span>
+              {%- if block.settings.link_product != blank -%}
+                {%- assign lp = all_products[block.settings.link_product] -%}
+                <a href="{{ lp.url }}">shop the look →</a>
+              {%- endif -%}
+            </div>
+          {%- endif -%}
+        </div>
+
+      {%- when 'statement' -%}
+        <div class="lb-statement pg-reveal" {{ block.shopify_attributes }}>
+          <h2>{{ block.settings.text }}</h2>
+        </div>
+
+    {%- endcase -%}
+  {%- else -%}
+    <div class="lb-block lb-full"><div class="lb-par">{% render 'striped-placeholder', label: 'lookbook · add blocks in editor', sub: 'full & split image blocks', bg: '#EFEDE8', fg: '#D9D5CC' %}</div></div>
+  {%- endfor -%}
+</div>
+
+{% schema %}
+{
+  "name": "Lookbook",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "lookbook" },
+    { "type": "text", "id": "title",   "label": "Title",   "default": "spring:summer '26" },
+    { "type": "text", "id": "meta_a",  "label": "Meta A",  "default": "drop:one" },
+    { "type": "text", "id": "meta_b",  "label": "Meta B",  "default": "ai-crafted editorial" },
+    { "type": "text", "id": "meta_c",  "label": "Meta C",  "default": "lahore · paris · new york" }
+  ],
+  "blocks": [
+    {
+      "type": "full", "name": "Full-bleed image",
+      "settings": [
+        { "type": "image_picker", "id": "image",   "label": "Image" },
+        { "type": "text",         "id": "caption", "label": "Caption" },
+        { "type": "product",      "id": "link_product", "label": "Shop-the-look product" }
+      ]
+    },
+    {
+      "type": "split", "name": "Two-image split",
+      "settings": [
+        { "type": "image_picker", "id": "image_a", "label": "Large image" },
+        { "type": "image_picker", "id": "image_b", "label": "Small image" },
+        { "type": "checkbox",     "id": "flipped", "label": "Flip layout", "default": false },
+        { "type": "text",         "id": "caption", "label": "Caption" },
+        { "type": "product",      "id": "link_product", "label": "Shop-the-look product" }
+      ]
+    },
+    {
+      "type": "statement", "name": "Statement",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Statement", "default": "clothing made to be lived in, not just looked at." }
+      ]
+    }
+  ],
+  "presets": [{
+    "name": "Lookbook",
+    "blocks": [
+      { "type": "full" },
+      { "type": "split" },
+      { "type": "statement" },
+      { "type": "full" }
+    ]
+  }]
+}
+{% endschema %}

@@ -2,7 +2,7 @@
   {
     "name": "theme_info",
     "theme_name": "Kamis Studio",
-    "theme_version": "1.0.0",
+    "theme_version": "2.0.0",
     "theme_author": "Kamis Studio",
     "theme_documentation_url": "https://kamis.studio",
     "theme_support_url": "mailto:studio@kamis.studio"
@@ -11,13 +11,14 @@
     "name": "Colors",
     "settings": [
       { "type": "header", "content": "Brand palette" },
-      { "type": "color", "id": "bg_color",     "label": "Background",     "default": "#FFFFFF" },
+      { "type": "color", "id": "bg_color",     "label": "Background",        "default": "#FFFFFF" },
       { "type": "color", "id": "fg_color",     "label": "Foreground (text)", "default": "#0A0A0A" },
-      { "type": "color", "id": "muted_color",  "label": "Muted text",     "default": "#8A8A8A" },
-      { "type": "color", "id": "rule_color",   "label": "Rules / borders", "default": "#E6E6E6" },
-      { "type": "color", "id": "card_color",   "label": "Card surface",   "default": "#F5F5F5" },
+      { "type": "color", "id": "muted_color",  "label": "Muted text",        "default": "#8A8A8A" },
+      { "type": "color", "id": "rule_color",   "label": "Rules / borders",   "default": "#E6E6E6" },
+      { "type": "color", "id": "card_color",   "label": "Card surface",      "default": "#F5F5F5" },
       { "type": "color", "id": "accent_color", "label": "Accent (burgundy)", "default": "#7A1F22",
-        "info": "Used for the colon in the wordmark, accent CTAs, and the scroll progress bar." }
+        "info": "Wordmark colon, accent CTAs, ship-progress bar, scroll progress." },
+      { "type": "color", "id": "announcement_bg", "label": "Announcement bar background", "default": "#0A0A0A" }
     ]
   },
   {
@@ -27,10 +28,28 @@
     ]
   },
   {
+    "name": "Layout & motion",
+    "settings": [
+      { "type": "range",    "id": "corner_radius",      "label": "Corner radius", "min": 0, "max": 24, "step": 2, "unit": "px", "default": 0 },
+      { "type": "checkbox", "id": "animations_enabled", "label": "Enable scroll animations", "default": true }
+    ]
+  },
+  {
     "name": "Brand",
     "settings": [
-      { "type": "image_picker", "id": "favicon", "label": "Favicon" },
-      { "type": "text",         "id": "tagline", "label": "Tagline", "default": "drop:one of spring:summer '26" }
+      { "type": "image_picker", "id": "favicon",       "label": "Favicon" },
+      { "type": "text",         "id": "tagline",       "label": "Tagline",      "default": "drop:one of spring:summer '26" },
+      { "type": "text",         "id": "season_note",   "label": "Season note",  "default": "spring:summer '26" },
+      { "type": "text",         "id": "contact_email", "label": "Contact email", "default": "studio@kamis.studio" },
+      { "type": "text",         "id": "social_line",   "label": "Social line (menu footer)", "default": "instagram · tiktok · pinterest" },
+      { "type": "text",         "id": "cities_line",   "label": "Cities line",  "default": "lahore · paris · new york" }
+    ]
+  },
+  {
+    "name": "Navigation",
+    "settings": [
+      { "type": "link_list", "id": "overlay_menu", "label": "Fullscreen menu links", "default": "main-menu",
+        "info": "Big numbered links in the fullscreen menu overlay." }
     ]
   },
   {
@@ -42,9 +61,14 @@
     ]
   },
   {
-    "name": "Cart",
+    "name": "Search & cart",
     "settings": [
-      { "type": "checkbox", "id": "show_bag_fab", "label": "Show floating bag button when items added", "default": true }
+      { "type": "text",     "id": "popular_searches",        "label": "Popular searches",
+        "info": "Comma-separated chips shown in the search overlay.",
+        "default": "varsity jacket, hoodie, wide leg trouser, monogram cap, denim" },
+      { "type": "number",   "id": "free_shipping_threshold", "label": "Free shipping threshold",
+        "info": "In your store currency (e.g. 25000). Drives the bag progress bar.", "default": 25000 },
+      { "type": "checkbox", "id": "show_bag_fab",            "label": "Show floating bag button", "default": true }
     ]
   }
 ]

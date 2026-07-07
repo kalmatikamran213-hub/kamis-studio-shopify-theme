@@ -1,0 +1,104 @@
+{%- comment -%} Contact page — info + form + FAQ. Matches Kamis Studio design. {%- endcomment -%}
+<div class="page-wrap">
+  <span class="page-eyebrow">{{ section.settings.eyebrow | default: 'contact' }}</span>
+  <h1 class="page-title">{{ section.settings.title | default: 'get in touch' }}</h1>
+  {%- if section.settings.intro != blank -%}
+    <p class="page-intro">{{ section.settings.intro }}</p>
+  {%- endif -%}
+
+  <div class="ct-grid">
+    <div class="ct-info">
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'info' -%}
+          <div class="ct-info-block" {{ block.shopify_attributes }}>
+            <h5>{{ block.settings.heading | downcase }}</h5>
+            <p>{{ block.settings.body }}</p>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+
+    <div class="ct-form">
+      {%- form 'contact', class: 'form-grid' -%}
+        {%- if form.posted_successfully? -%}
+          <p class="form-message success full">✓ thanks — we'll be in touch shortly.</p>
+        {%- elsif form.errors -%}
+          <p class="form-message full">{{ form.errors | default_errors }}</p>
+        {%- endif -%}
+        <div class="form-field">
+          <label class="form-label" for="ct-name">name</label>
+          <input class="form-input" id="ct-name" type="text" name="contact[name]" value="{{ form.name }}" required>
+        </div>
+        <div class="form-field">
+          <label class="form-label" for="ct-email">email</label>
+          <input class="form-input" id="ct-email" type="email" name="contact[email]" value="{{ form.email }}" required>
+        </div>
+        <div class="form-field full">
+          <label class="form-label" for="ct-msg">message</label>
+          <textarea class="form-input" id="ct-msg" name="contact[body]" rows="5" required>{{ form.body }}</textarea>
+        </div>
+        <div class="full">
+          <button class="btn-fill" type="submit">send message</button>
+        </div>
+      {%- endform -%}
+    </div>
+  </div>
+
+  {%- assign has_faq = false -%}
+  {%- for block in section.blocks -%}{% if block.type == 'faq' %}{% assign has_faq = true %}{% endif %}{%- endfor -%}
+  {%- if has_faq -%}
+    <div class="faq" id="faq">
+      <h3>{{ section.settings.faq_heading | default: 'frequently asked' }}</h3>
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'faq' -%}
+          <div class="faq-row" {{ block.shopify_attributes }}>
+            <button class="faq-h" type="button" aria-expanded="false">
+              <span>{{ block.settings.q }}</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-body"><p>{{ block.settings.a }}</p></div>
+          </div>
+        {%- endif -%}
+      {%- endfor -%}
+    </div>
+  {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Contact",
+  "settings": [
+    { "type": "text",     "id": "eyebrow", "label": "Eyebrow", "default": "contact" },
+    { "type": "text",     "id": "title",   "label": "Title",   "default": "get in touch" },
+    { "type": "textarea", "id": "intro",   "label": "Intro",   "default": "questions about a piece, a drop, or a collaboration? we usually reply within one working day." },
+    { "type": "text",     "id": "faq_heading", "label": "FAQ heading", "default": "frequently asked" }
+  ],
+  "blocks": [
+    {
+      "type": "info", "name": "Info block",
+      "settings": [
+        { "type": "text",     "id": "heading", "label": "Heading", "default": "studio" },
+        { "type": "textarea", "id": "body",    "label": "Body",    "default": "studio@kamis.studio" }
+      ]
+    },
+    {
+      "type": "faq", "name": "FAQ item",
+      "settings": [
+        { "type": "text",     "id": "q", "label": "Question", "default": "how long does shipping take?" },
+        { "type": "textarea", "id": "a", "label": "Answer",   "default": "orders dispatch within 3–5 working days. free delivery over rs.25,000." }
+      ]
+    }
+  ],
+  "presets": [{
+    "name": "Contact",
+    "blocks": [
+      { "type": "info", "settings": { "heading": "studio", "body": "studio@kamis.studio" } },
+      { "type": "info", "settings": { "heading": "press", "body": "press@kamis.studio" } },
+      { "type": "info", "settings": { "heading": "visit", "body": "lahore · paris · new york" } },
+      { "type": "faq", "settings": { "q": "how long does shipping take?", "a": "orders dispatch within 3–5 working days. free delivery over rs.25,000." } },
+      { "type": "faq", "settings": { "q": "what is your returns policy?", "a": "returns accepted within 14 days of delivery, unworn with tags." } },
+      { "type": "faq", "settings": { "q": "how do i find my size?", "a": "each product page has a size guide. our model is 6'1 / 1.86m and wears a medium." } }
+    ]
+  }]
+}
+{% endschema %}

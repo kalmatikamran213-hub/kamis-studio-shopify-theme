@@ -1,162 +1,113 @@
-/*
- * ------------------------------------------------------------
- * IMPORTANT: The contents of this file are auto-generated.
- *
- * This file may be updated by the Shopify admin theme editor
- * or related systems. Please exercise caution as any changes
- * made to this file may be overwritten.
- * ------------------------------------------------------------
- */
 {
   "sections": {
     "hero": {
       "type": "hero",
       "settings": {
-        "video": "shopify://files/videos/0001-27.mp4",
-        "palette": "#A89177,#7A6852,#3F3429,#1F1A14",
-        "height": "78vh",
-        "label": "hero · campaign film",
-        "sub": "kamis:studio · premium fashion · men & women",
-        "headline": "kamis:studio",
-        "subheadline": "premium · affordable · for everyone",
-        "card_text": "premium quality for men & women · new collection now live",
-        "card_button_text": "shop now",
+        "height": "100vh",
+        "label": "hero · drop:one campaign film",
+        "sub": "placeholder · drop campaign reel · 1920×1080 · loop",
+        "headline": "drop:one",
+        "subheadline": "spring:summer '26",
+        "card_text": "drop:one of spring:summer '26 now live for kamis | members",
+        "card_button_text": "see:more",
         "card_button_link": "/collections/all",
         "show_marquee": true,
-        "marquee_text": "kamis:studio   ·   men   ·   women   ·   premium quality   ·   affordable price   ·"
-      }
-    },
-    "intro": {
-      "type": "intro",
-      "settings": {
-        "heading": "premium fashion for men & women",
-        "body": "<p>kamis:studio is a premium fashion brand built for everyone. elevated basics, refined silhouettes, and quality materials — designed to look expensive without the price tag.</p>",
-        "button_text": "shop all",
-        "button_link": "/collections/all"
-      }
-    },
-    "gender-split": {
-      "type": "gender-split",
-      "settings": {
-        "men_image": "shopify://shop_images/0003-16.png",
-        "men_eyebrow": "for him",
-        "men_label": "men",
-        "men_button": "shop men",
-        "men_link": "",
-        "women_image": "shopify://shop_images/freepik__add-realistic-looks-to-model-faces-and-remove-thes__12695.png",
-        "women_eyebrow": "for her",
-        "women_label": "women",
-        "women_button": "shop women",
-        "women_link": ""
+        "marquee_text": "kamis:studio   ·   drop:one   ·   spring:summer '26   ·   ai-crafted visuals   ·  ",
+        "palette": "#A89177,#7A6852,#3F3429,#1F1A14"
       }
     },
     "new-in": {
       "type": "featured-collection",
       "settings": {
-        "collection": "",
         "limit": 4,
-        "eyebrow": "new:in",
-        "eyebrow_meta": "just dropped · fresh arrivals",
-        "button_text": "",
-        "button_link": "",
-        "placeholder_label": "product · new:in",
+        "label": "new:in",
+        "sub": "drop:one · 4 pieces",
         "placeholder_palette": "#EFEDE8,#EAE6DC,#E6E8EB,#F2EFE8"
       }
     },
-    "banner-men": {
+    "banner-hoodie": {
       "type": "editorial-banner",
       "settings": {
-        "video": "shopify://files/videos/0001-5.mp4",
-        "palette": "#1A1A1A,#2C2C2C,#3F3429,#1F1A14",
-        "kenburns": true,
-        "height": "80vh",
-        "label": "banner · men's collection",
-        "sub": "upload your campaign video or image",
-        "heading": "men's collection",
-        "subheading": "premium cuts · refined fits · affordable",
+        "label": "banner · the 2.0 hoodie",
+        "sub": "placeholder · close-crop hoodie reel · 1920×1080",
+        "heading": "the 2.0 hoodie",
+        "subheading": "three years of refinement · one perfect silhouette",
         "position": "center",
-        "button_text": "shop men",
-        "button_link": ""
+        "palette": "#D9B07A,#A87D4C,#3A2C1B,#1A1410"
       }
     },
-    "men-products": {
+    "hoodies": {
       "type": "featured-collection",
       "settings": {
-        "collection": "",
         "limit": 4,
-        "eyebrow": "",
-        "eyebrow_meta": "",
-        "button_text": "shop all men",
-        "button_link": "",
-        "placeholder_label": "product · men",
+        "label": "hoodies",
+        "sub": "drop:one · the 2.0",
+        "cta": "shop:now",
         "placeholder_palette": "#1D2433,#15161A,#C7544B,#F4EAD0"
       }
     },
-    "banner-women": {
+    "banner-legwear": {
       "type": "editorial-banner",
       "settings": {
-        "video": "shopify://files/videos/freepik_create-a-video_2778102624.mp4",
-        "palette": "#D9D2BC,#9F9876,#5C5638,#23211A",
-        "kenburns": true,
-        "height": "80vh",
-        "label": "banner · women's collection",
-        "sub": "upload your campaign video or image",
-        "heading": "women's collection",
-        "subheading": "elevated style · effortless · affordable",
+        "label": "banner · legwear film",
+        "sub": "placeholder · walking shot · concrete loop",
+        "heading": "legwear",
+        "subheading": "new fits for spring:summer '26",
         "position": "bottom",
-        "button_text": "shop women",
-        "button_link": ""
+        "palette": "#D9D2BC,#9F9876,#5C5638,#23211A"
       }
     },
-    "women-products": {
+    "trousers": {
       "type": "featured-collection",
       "settings": {
-        "collection": "",
         "limit": 4,
-        "eyebrow": "",
-        "eyebrow_meta": "",
-        "button_text": "shop all women",
-        "button_link": "",
-        "placeholder_label": "product · women",
-        "placeholder_palette": "#EFEAD9,#E8E0D4,#D5CFC4,#C9C9C7"
+        "label": "legwear",
+        "sub": "tailored wide leg · 4 colours",
+        "cta": "shop:now",
+        "placeholder_palette": "#16171A,#EFEAD9,#5B5938,#C9C9C7"
       }
     },
-    "banner-quality": {
+    "banner-headwear": {
       "type": "editorial-banner",
       "settings": {
-        "video": "shopify://files/videos/0025.mp4",
-        "palette": "#3A4A3F,#22312A,#161D19,#0B100E",
-        "kenburns": true,
-        "height": "80vh",
-        "label": "editorial · premium quality",
-        "sub": "upload your brand video or image",
-        "heading": "premium quality",
-        "subheading": "looks expensive · priced for everyone",
+        "label": "editorial · bespoke headwear",
+        "sub": "placeholder · still image · 4×5",
+        "heading": "bespoke headwear",
+        "subheading": "best sellers for a reason",
         "position": "bottom",
-        "button_text": "",
-        "button_link": ""
+        "kenburns": false,
+        "palette": "#3A4A3F,#22312A,#161D19,#0B100E"
+      }
+    },
+    "caps": {
+      "type": "featured-collection",
+      "settings": {
+        "limit": 4,
+        "label": "headwear",
+        "sub": "bespoke · best sellers",
+        "cta": "shop:now",
+        "placeholder_palette": "#EFEAD9,#26392B,#D7D2C5,#9A9A98"
       }
     },
     "colophon": {
       "type": "colophon",
       "settings": {
-        "eyebrow": "about · kamis:studio",
-        "heading": "premium fashion for men & women at prices that make sense.",
-        "body": "<p>kamis:studio was built on one idea — that premium quality shouldn't cost a fortune. every piece is designed with intention, crafted with care, and priced so everyone can wear it.</p>",
-        "contact": "contact · hello@kamis.studio"
+        "eyebrow": "studio · note 001",
+        "heading": "every visual on this site is ai-crafted, art-directed, and human-finished by kamis studio.",
+        "body": "<p>we operate as a creative atelier for fashion and product brands. each campaign in this drop was rendered, retouched, and graded over a six-week production cycle — no physical samples, no shoot days, no waste.</p>",
+        "contact": "contact · studio@kamis.studio"
       }
     }
   },
   "order": [
     "hero",
-    "intro",
-    "gender-split",
     "new-in",
-    "banner-men",
-    "men-products",
-    "banner-women",
-    "women-products",
-    "banner-quality",
+    "banner-hoodie",
+    "hoodies",
+    "banner-legwear",
+    "trousers",
+    "banner-headwear",
+    "caps",
     "colophon"
   ]
 }

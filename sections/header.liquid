@@ -1,27 +1,26 @@
-<nav class="nav{% if section.settings.always_solid %} always-solid{% endif %}" data-header>
+<nav class="nav{% if section.settings.always_solid %} is-scrolled always-solid{% endif %}" data-header>
   <div class="nav-inner">
     <ul class="nav-l">
-      {%- for link in section.settings.menu.links -%}
-        <li>
-          <a href="{{ link.url }}">
-            {%- if link.handle == 'drop-one' or link.title contains 'drop' -%}
-              <span data-accent>{{ link.title | downcase }}</span>
-            {%- else -%}
-              {{ link.title | downcase }}
-            {%- endif -%}
-          </a>
-        </li>
+      <li>
+        <button class="linklike menu-btn" type="button" data-open="menu" aria-label="menu">
+          <span class="menu-lines" aria-hidden="true"><i></i><i></i></span>
+          menu
+        </button>
+      </li>
+      {%- if section.settings.menu != blank -%}
+        {%- for link in section.settings.menu.links -%}
+          <li>
+            <a href="{{ link.url }}"{% if link.active %} class="nav-active"{% endif %}>
+              {%- if link.title contains 'drop' -%}<span data-accent>{{ link.title | downcase }}</span>{%- else -%}{{ link.title | downcase }}{%- endif -%}
+            </a>
+          </li>
+        {%- endfor -%}
       {%- else -%}
-        <li><a href="/collections/all?filter.p.tag=men">men</a></li>
-        <li><a href="/collections/all?filter.p.tag=women">women</a></li>
-        <li><a href="/collections/all?sort_by=created-descending">new:in</a></li>
-        <li><a href="/collections/all"><span data-accent>shop all</span></a></li>
-      {%- endfor -%}
+        <li><a href="{{ routes.all_products_collection_url }}">shop</a></li>
+        <li><a href="/pages/lookbook">lookbook</a></li>
+        <li><a href="{{ routes.all_products_collection_url }}"><span data-accent>drop:one</span></a></li>
+      {%- endif -%}
     </ul>
-
-    <button class="nav-burger" type="button" data-open="menu" aria-label="menu">
-      <span></span><span></span><span></span>
-    </button>
 
     <a href="{{ shop.url }}" class="wordmark" aria-label="{{ shop.name }}">
       {%- assign mark = section.settings.wordmark | default: 'kamis:studio' -%}
@@ -34,11 +33,11 @@
     </a>
 
     <ul class="nav-r">
-      <li><a href="/pages/info">info</a></li>
-      <li><a href="/account">account</a></li>
-      <li><button type="button" class="linklike" data-open="search">search</button></li>
+      <li><a href="{{ section.settings.info_link | default: '/pages/contact' }}">info</a></li>
+      <li><a href="{{ routes.account_url | default: '/account' }}">account</a></li>
+      <li><button class="linklike" type="button" data-open="search">search</button></li>
       <li>
-        <button type="button" class="linklike" data-open="bag">
+        <button class="linklike" type="button" data-open="bag">
           bag <span class="bag-count" data-bag-count>({{ cart.item_count }})</span>
         </button>
       </li>
@@ -47,19 +46,20 @@
 </nav>
 
 <style>
-  .nav.is-scrolled [data-accent], .nav.always-solid [data-accent] { color: var(--accent); }
+  .nav.is-scrolled [data-accent] { color: var(--accent); }
 </style>
 
 {% schema %}
 {
   "name": "Header",
   "settings": [
-    { "type": "text",      "id": "wordmark",      "label": "Wordmark",     "default": "kamis:studio",
+    { "type": "text",      "id": "wordmark",     "label": "Wordmark", "default": "kamis:studio",
       "info": "Use a colon to colour the separator with the brand accent." },
-    { "type": "link_list", "id": "menu",          "label": "Main menu",    "default": "main-menu" },
-    { "type": "checkbox",  "id": "always_solid",  "label": "Always solid background",
-      "info": "When off, the nav is transparent over hero sections and turns white on scroll.",
-      "default": false }
+    { "type": "link_list", "id": "menu",         "label": "Left menu", "default": "main-menu",
+      "info": "Links shown left of the wordmark. Leave default for shop / lookbook / drop:one." },
+    { "type": "url",       "id": "info_link",    "label": "Info link", "info": "Defaults to /pages/contact" },
+    { "type": "checkbox",  "id": "always_solid", "label": "Always solid background",
+      "info": "When off, the nav is transparent over the hero and turns solid on scroll.", "default": false }
   ],
   "presets": [{ "name": "Header" }]
 }

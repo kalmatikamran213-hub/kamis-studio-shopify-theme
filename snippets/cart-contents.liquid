@@ -1,0 +1,53 @@
+{%- comment -%}
+  Inner contents of the bag drawer. Rendered server-side and mirrored by
+  theme.js after Ajax updates. `cart` and `threshold` (cents) passed in.
+{%- endcomment -%}
+{%- if cart.item_count == 0 -%}
+  <div class="empty">
+    <p>your bag is empty.</p>
+    <p class="muted">drop:one of spring:summer '26 is now live.</p>
+    <a class="btn-outline dark" href="{{ routes.all_products_collection_url }}">shop drop:one</a>
+  </div>
+{%- else -%}
+  {%- assign to_free = threshold | minus: cart.total_price -%}
+  <div class="ship-progress">
+    {%- if to_free > 0 -%}
+      <span class="small">add {{ to_free | money }} for free shipping</span>
+    {%- else -%}
+      <span class="small">✓ free shipping unlocked</span>
+    {%- endif -%}
+    <div class="ship-bar">
+      {%- assign pct = cart.total_price | times: 100.0 | divided_by: threshold -%}
+      <div class="ship-fill" style="width: {% if pct > 100 %}100{% else %}{{ pct }}{% endif %}%"></div>
+    </div>
+  </div>
+  <ul class="bag-list">
+    {%- for item in cart.items -%}
+      <li class="bag-item" data-line="{{ forloop.index }}" data-key="{{ item.key }}">
+        <a href="{{ item.url }}">
+          {%- if item.image -%}
+            <img src="{{ item.image | image_url: width: 160 }}" alt="{{ item.product.title | escape }}">
+          {%- else -%}
+            {% render 'striped-placeholder', label: item.product.title, sub: 'flat', bg: '#EFEDE8', fg: '#D9D5CC' %}
+          {%- endif -%}
+        </a>
+        <div class="bag-meta">
+          <div class="bag-name">{{ item.product.title | downcase }}</div>
+          <div class="bag-variant">{% unless item.variant.title contains 'Default' %}{{ item.variant.title | downcase }}{% endunless %}</div>
+          <div class="bag-price">{{ item.final_price | money }}</div>
+          <div class="qty-row">
+            <button class="qty-btn" type="button" data-qty-down aria-label="decrease">−</button>
+            <span class="qty-num">{{ item.quantity }}</span>
+            <button class="qty-btn" type="button" data-qty-up aria-label="increase">+</button>
+          </div>
+        </div>
+        <button class="linklike small" type="button" data-remove>remove</button>
+      </li>
+    {%- endfor -%}
+  </ul>
+  <div class="bag-foot">
+    <div class="bag-sub"><span>subtotal</span><span>{{ cart.total_price | money }}</span></div>
+    <a class="btn-fill" href="{{ routes.cart_url }}">checkout</a>
+    <p class="muted small">shipping &amp; taxes calculated at checkout.</p>
+  </div>
+{%- endif -%}
