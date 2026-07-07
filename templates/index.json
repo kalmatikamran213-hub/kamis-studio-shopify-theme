@@ -1,8 +1,18 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "hero": {
       "type": "hero",
       "settings": {
+        "palette": "#A89177,#7A6852,#3F3429,#1F1A14",
         "height": "100vh",
         "label": "hero · drop:one campaign film",
         "sub": "placeholder · drop campaign reel · 1920×1080 · loop",
@@ -12,80 +22,99 @@
         "card_button_text": "see:more",
         "card_button_link": "/collections/all",
         "show_marquee": true,
-        "marquee_text": "kamis:studio   ·   drop:one   ·   spring:summer '26   ·   ai-crafted visuals   ·  ",
-        "palette": "#A89177,#7A6852,#3F3429,#1F1A14"
+        "marquee_text": "kamis:studio   ·   drop:one   ·   spring:summer '26   ·   ai-crafted visuals   ·"
       }
     },
     "new-in": {
       "type": "featured-collection",
       "settings": {
-        "limit": 4,
+        "collection": "",
+        "limit": 8,
         "label": "new:in",
         "sub": "drop:one · 4 pieces",
+        "cta": "",
+        "cta_link": "",
         "placeholder_palette": "#EFEDE8,#EAE6DC,#E6E8EB,#F2EFE8"
       }
     },
     "banner-hoodie": {
       "type": "editorial-banner",
       "settings": {
+        "palette": "#D9B07A,#A87D4C,#3A2C1B,#1A1410",
+        "kenburns": true,
+        "height": "80vh",
         "label": "banner · the 2.0 hoodie",
         "sub": "placeholder · close-crop hoodie reel · 1920×1080",
         "heading": "the 2.0 hoodie",
         "subheading": "three years of refinement · one perfect silhouette",
         "position": "center",
-        "palette": "#D9B07A,#A87D4C,#3A2C1B,#1A1410"
+        "button_text": "",
+        "button_link": ""
       }
     },
     "hoodies": {
       "type": "featured-collection",
       "settings": {
+        "collection": "",
         "limit": 4,
         "label": "hoodies",
         "sub": "drop:one · the 2.0",
         "cta": "shop:now",
+        "cta_link": "",
         "placeholder_palette": "#1D2433,#15161A,#C7544B,#F4EAD0"
       }
     },
     "banner-legwear": {
       "type": "editorial-banner",
       "settings": {
+        "palette": "#D9D2BC,#9F9876,#5C5638,#23211A",
+        "kenburns": true,
+        "height": "80vh",
         "label": "banner · legwear film",
         "sub": "placeholder · walking shot · concrete loop",
         "heading": "legwear",
         "subheading": "new fits for spring:summer '26",
         "position": "bottom",
-        "palette": "#D9D2BC,#9F9876,#5C5638,#23211A"
+        "button_text": "",
+        "button_link": ""
       }
     },
     "trousers": {
       "type": "featured-collection",
       "settings": {
-        "limit": 4,
+        "collection": "",
+        "limit": 8,
         "label": "legwear",
         "sub": "tailored wide leg · 4 colours",
         "cta": "shop:now",
+        "cta_link": "",
         "placeholder_palette": "#16171A,#EFEAD9,#5B5938,#C9C9C7"
       }
     },
     "banner-headwear": {
       "type": "editorial-banner",
       "settings": {
+        "palette": "#3A4A3F,#22312A,#161D19,#0B100E",
+        "kenburns": false,
+        "height": "80vh",
         "label": "editorial · bespoke headwear",
         "sub": "placeholder · still image · 4×5",
         "heading": "bespoke headwear",
         "subheading": "best sellers for a reason",
         "position": "bottom",
-        "kenburns": false,
-        "palette": "#3A4A3F,#22312A,#161D19,#0B100E"
+        "button_text": "",
+        "button_link": ""
       }
     },
     "caps": {
       "type": "featured-collection",
       "settings": {
-        "limit": 4,
+        "collection": "",
+        "limit": 8,
         "label": "headwear",
         "sub": "bespoke · best sellers",
         "cta": "shop:now",
+        "cta_link": "",
         "placeholder_palette": "#EFEAD9,#26392B,#D7D2C5,#9A9A98"
       }
     },

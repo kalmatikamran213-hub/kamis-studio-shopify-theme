@@ -1,17 +1,72 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "contact": {
       "type": "contact",
       "blocks": {
-        "i1": { "type": "info", "settings": { "heading": "studio", "body": "studio@kamis.studio" } },
-        "i2": { "type": "info", "settings": { "heading": "press", "body": "press@kamis.studio" } },
-        "i3": { "type": "info", "settings": { "heading": "visit", "body": "lahore · paris · new york" } },
-        "f1": { "type": "faq", "settings": { "q": "how long does shipping take?", "a": "orders dispatch within 3–5 working days. free delivery over rs.25,000." } },
-        "f2": { "type": "faq", "settings": { "q": "what is your returns policy?", "a": "returns accepted within 14 days of delivery, unworn with tags." } },
-        "f3": { "type": "faq", "settings": { "q": "how do i find my size?", "a": "each product page has a size guide. our model is 6'1 / 1.86m and wears a medium." } }
+        "i1": {
+          "type": "info",
+          "settings": {
+            "heading": "studio",
+            "body": "studio@kamis.studio"
+          }
+        },
+        "i2": {
+          "type": "info",
+          "settings": {
+            "heading": "press",
+            "body": "press@kamis.studio"
+          }
+        },
+        "i3": {
+          "type": "info",
+          "settings": {
+            "heading": "visit",
+            "body": "lahore · paris · new york"
+          }
+        },
+        "f1": {
+          "type": "faq",
+          "settings": {
+            "q": "how long does shipping take?",
+            "a": "orders dispatch within 3–5 working days. free delivery over rs.25,000."
+          }
+        },
+        "f2": {
+          "type": "faq",
+          "settings": {
+            "q": "what is your returns policy?",
+            "a": "returns accepted within 14 days of delivery, unworn with tags."
+          }
+        },
+        "f3": {
+          "type": "faq",
+          "settings": {
+            "q": "how do i find my size?",
+            "a": "each product page has a size guide. our model is 6'1 / 1.86m and wears a medium."
+          }
+        }
       },
-      "block_order": ["i1", "i2", "i3", "f1", "f2", "f3"]
+      "block_order": [
+        "i1",
+        "i2",
+        "i3",
+        "f1",
+        "f2",
+        "f3"
+      ],
+      "settings": {}
     }
   },
-  "order": ["contact"]
+  "order": [
+    "contact"
+  ]
 }
