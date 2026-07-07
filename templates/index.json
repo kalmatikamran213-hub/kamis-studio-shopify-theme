@@ -13,7 +13,7 @@
       "type": "hero",
       "settings": {
         "palette": "#A89177,#7A6852,#3F3429,#1F1A14",
-        "height": "100vh",
+        "height": "90vh",
         "label": "hero · drop:one campaign film",
         "sub": "placeholder · drop campaign reel · 1920×1080 · loop",
         "headline": "drop:one",
@@ -118,6 +118,19 @@
         "placeholder_palette": "#EFEAD9,#26392B,#D7D2C5,#9A9A98"
       }
     },
+    "featured_collection_xammbF": {
+      "type": "featured-collection",
+      "name": "Product grid",
+      "settings": {
+        "collection": "",
+        "limit": 4,
+        "label": "",
+        "sub": "",
+        "cta": "",
+        "cta_link": "",
+        "placeholder_palette": "#EFEDE8,#EAE6DC,#E6E8EB,#F2EFE8"
+      }
+    },
     "colophon": {
       "type": "colophon",
       "settings": {
@@ -137,6 +150,7 @@
     "trousers",
     "banner-headwear",
     "caps",
+    "featured_collection_xammbF",
     "colophon"
   ]
 }
