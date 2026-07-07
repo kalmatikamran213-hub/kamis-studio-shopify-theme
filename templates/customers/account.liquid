@@ -1,0 +1,44 @@
+<div class="page-wrap">
+  <span class="page-eyebrow">account · members</span>
+  <div class="ac-hello">
+    <h1 class="page-title" style="margin-bottom:0">hello, {{ customer.first_name | default: customer.email | downcase }}</h1>
+    <a class="linklike" href="{{ routes.account_logout_url }}">sign out</a>
+  </div>
+
+  <div class="ac-dash" style="margin-top:56px">
+    <div class="ac-section">
+      <h4>orders</h4>
+      {%- if customer.orders.size > 0 -%}
+        {%- for order in customer.orders -%}
+          <a class="order-row" href="{{ order.customer_url }}" style="color:inherit; text-decoration:none;">
+            <span class="order-id">{{ order.name }}</span>
+            <span class="muted">{{ order.created_at | date: '%b %d, %Y' }} · {{ order.line_items.size }} item{% if order.line_items.size != 1 %}s{% endif %}</span>
+            <span>{{ order.total_price | money }}</span>
+            <span class="order-status">{{ order.financial_status_label | downcase }}</span>
+          </a>
+        {%- endfor -%}
+      {%- else -%}
+        <div class="empty" style="padding: 32px 0;">
+          <p>no orders yet.</p>
+          <p class="muted">drop:one of spring:summer '26 is now live.</p>
+          <a class="btn-outline dark" style="text-decoration:none" href="{{ routes.all_products_collection_url }}">shop drop:one</a>
+        </div>
+      {%- endif -%}
+    </div>
+
+    <div class="ac-section">
+      <h4>default address</h4>
+      {%- if customer.default_address -%}
+        <p style="font-size:14px; line-height:1.7; margin:0;">
+          {{ customer.default_address.first_name }} {{ customer.default_address.last_name }}<br>
+          {{ customer.default_address.address1 }}{% if customer.default_address.address2 != blank %}, {{ customer.default_address.address2 }}{% endif %}<br>
+          {{ customer.default_address.city }}{% if customer.default_address.province %}, {{ customer.default_address.province }}{% endif %} {{ customer.default_address.zip }}<br>
+          {{ customer.default_address.country }}
+        </p>
+      {%- else -%}
+        <p class="muted" style="font-size:14px;">no address saved yet.</p>
+      {%- endif -%}
+      <p style="margin-top:16px"><a class="linklike" href="{{ routes.account_addresses_url }}">manage addresses ({{ customer.addresses_count }})</a></p>
+    </div>
+  </div>
+</div>

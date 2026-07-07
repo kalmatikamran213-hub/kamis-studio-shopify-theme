@@ -38,9 +38,36 @@
       </ul>
       <div class="bag-foot" style="margin-top: 24px">
         <div class="bag-sub" style="font-size: 16px"><span>{{ 'cart.general.subtotal' | t }}</span><span>{{ cart.total_price | money }}</span></div>
-        <button class="btn-fill" type="submit" name="checkout" style="margin-top: 12px">{{ 'cart.general.checkout' | t }}</button>
+        <div style="display:flex; gap:12px; margin-top: 12px;">
+          <button class="btn-outline dark" type="submit" name="update" style="flex:1">update bag</button>
+          <button class="btn-fill" type="submit" name="checkout" style="flex:2">{{ 'cart.general.checkout' | t }}</button>
+        </div>
         <p class="muted small">{{ 'cart.general.shipping_note' | t }}</p>
       </div>
     </form>
+
+    <script>
+      // page-local qty / remove — posts through the cart form
+      // (capture phase so the drawer's Ajax handlers don't double-fire)
+      (function () {
+        var form = document.querySelector('.template-cart form[action*="cart"], form[action="{{ routes.cart_url }}"]');
+        if (!form) return;
+        form.addEventListener('click', function (e) {
+          var dec = e.target.closest('[data-qty="dec"]');
+          var inc = e.target.closest('[data-qty="inc"]');
+          var rm = e.target.closest('[data-remove]');
+          if (!dec && !inc && !rm) return;
+          e.preventDefault(); e.stopPropagation();
+          var item = e.target.closest('.bag-item');
+          var input = item && item.querySelector('input[name="updates[]"]');
+          if (!input) return;
+          var q = parseInt(input.value, 10) || 0;
+          if (dec) input.value = Math.max(0, q - 1);
+          if (inc) input.value = q + 1;
+          if (rm) input.value = 0;
+          form.submit();
+        }, true);
+      })();
+    </script>
   {%- endif -%}
 </div>

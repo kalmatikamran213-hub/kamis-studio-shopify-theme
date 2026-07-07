@@ -135,7 +135,7 @@
     });
     html += '</ul><div class="bag-foot"><div class="bag-sub"><span>subtotal</span><span>' +
       money(cartState.total_price) + '</span></div>' +
-      '<a class="btn-fill" href="' + ROUTES.cart + '">checkout</a>' +
+      '<a class="btn-fill" href="/checkout">checkout</a>' +
       '<p class="muted small">shipping &amp; taxes calculated at checkout.</p></div>';
     body.innerHTML = html;
   }
@@ -145,6 +145,13 @@
     var form = e.target.closest('[data-quick-add], [data-product-form]');
     if (!form) return;
     e.preventDefault();
+    // PDP: require a size before adding
+    var proot = form.closest('[data-product]');
+    if (proot && proot.getAttribute('data-require-size') === 'true' && !proot.querySelector('.pdp-size.is-active')) {
+      var sizes = proot.querySelector('.pdp-sizes');
+      if (sizes) { sizes.classList.remove('shake'); void sizes.offsetWidth; sizes.classList.add('shake'); }
+      return;
+    }
     var id = (form.querySelector('[name="id"]') || {}).value;
     if (!id) return;
     var btn = form.querySelector('button[type="submit"]');

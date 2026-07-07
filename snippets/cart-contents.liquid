@@ -47,7 +47,7 @@
   </ul>
   <div class="bag-foot">
     <div class="bag-sub"><span>subtotal</span><span>{{ cart.total_price | money }}</span></div>
-    <a class="btn-fill" href="{{ routes.cart_url }}">checkout</a>
+    <a class="btn-fill" href="/checkout">checkout</a>
     <p class="muted small">shipping &amp; taxes calculated at checkout.</p>
   </div>
 {%- endif -%}

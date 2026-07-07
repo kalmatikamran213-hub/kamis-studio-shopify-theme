@@ -1,0 +1,49 @@
+<div class="page-wrap narrow">
+  <span class="page-eyebrow">account</span>
+  <h1 class="page-title">sign in</h1>
+
+  {%- form 'customer_login', class: 'form-grid', novalidate: 'novalidate' -%}
+    {%- if form.errors -%}
+      <p class="form-message full">{{ form.errors | default_errors }}</p>
+    {%- endif -%}
+    <div class="form-field full">
+      <label class="form-label" for="login-email">email</label>
+      <input class="form-input" type="email" name="customer[email]" id="login-email" autocomplete="email" required>
+    </div>
+    <div class="form-field full">
+      <label class="form-label" for="login-password">password</label>
+      <input class="form-input" type="password" name="customer[password]" id="login-password" autocomplete="current-password" required>
+    </div>
+    <div class="full">
+      <button class="btn-fill" type="submit">sign in</button>
+    </div>
+    <div class="full" style="display:flex; gap:20px; font-size:13px;">
+      <a class="linklike" href="#recover" onclick="document.getElementById('recover').style.display='block';this.closest('form').style.display='none';return false">forgot password?</a>
+      <a class="linklike" href="{{ routes.account_register_url }}">create account</a>
+    </div>
+  {%- endform -%}
+
+  <div id="recover" style="display:none">
+    <h2 style="font-size:18px; font-weight:500; margin:0 0 20px; text-transform:lowercase;">reset your password</h2>
+    <p class="muted" style="margin:0 0 24px; font-size:14px;">we'll email you a link to reset it.</p>
+    {%- form 'recover_customer_password', class: 'form-grid' -%}
+      {%- if form.posted_successfully? -%}
+        <p class="form-message success full">✓ check your email for the reset link.</p>
+      {%- elsif form.errors -%}
+        <p class="form-message full">{{ form.errors | default_errors }}</p>
+      {%- endif -%}
+      <div class="form-field full">
+        <label class="form-label" for="recover-email">email</label>
+        <input class="form-input" type="email" name="email" id="recover-email" autocomplete="email" required>
+      </div>
+      <div class="full" style="display:flex; gap:16px; align-items:center;">
+        <button class="btn-fill" type="submit">send reset link</button>
+        <a class="linklike" href="{{ routes.account_login_url }}">back to sign in</a>
+      </div>
+    {%- endform -%}
+  </div>
+</div>
+
+{%- if form.posted_successfully? -%}
+  <script>document.addEventListener('DOMContentLoaded',function(){var r=document.getElementById('recover');if(r&&location.hash==='#recover')r.style.display='block';});</script>
+{%- endif -%}

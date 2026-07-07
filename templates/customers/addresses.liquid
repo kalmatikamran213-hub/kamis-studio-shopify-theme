@@ -1,0 +1,78 @@
+<div class="page-wrap narrow">
+  <span class="page-eyebrow"><a class="linklike" href="{{ routes.account_url }}">← account</a></span>
+  <h1 class="page-title">addresses</h1>
+
+  <div style="margin: 32px 0;">
+    <button class="btn-outline dark" type="button" onclick="document.getElementById('addr-new').style.display='block';this.style.display='none'">+ add new address</button>
+  </div>
+
+  <div id="addr-new" style="display:none; margin-bottom:56px;">
+    {%- form 'customer_address', customer.new_address, class: 'form-grid' -%}
+      <div class="form-field"><label class="form-label">first name</label><input class="form-input" type="text" name="address[first_name]"></div>
+      <div class="form-field"><label class="form-label">last name</label><input class="form-input" type="text" name="address[last_name]"></div>
+      <div class="form-field full"><label class="form-label">address</label><input class="form-input" type="text" name="address[address1]"></div>
+      <div class="form-field full"><label class="form-label">apartment, suite, etc.</label><input class="form-input" type="text" name="address[address2]"></div>
+      <div class="form-field"><label class="form-label">city</label><input class="form-input" type="text" name="address[city]"></div>
+      <div class="form-field"><label class="form-label">postal / zip</label><input class="form-input" type="text" name="address[zip]"></div>
+      <div class="form-field"><label class="form-label">country</label>
+        <select class="form-input" name="address[country]" data-default="{{ customer.new_address.country }}">{{ country_option_tags }}</select>
+      </div>
+      <div class="form-field"><label class="form-label">phone</label><input class="form-input" type="tel" name="address[phone]"></div>
+      <div class="full" style="display:flex; gap:12px; align-items:center;">
+        <label style="font-size:13px; display:flex; gap:8px; align-items:center;">
+          <input type="checkbox" name="address[default]"> set as default
+        </label>
+      </div>
+      <div class="full"><button class="btn-fill" type="submit">save address</button></div>
+    {%- endform -%}
+  </div>
+
+  <div class="ac-section">
+    <h4>saved addresses ({{ customer.addresses_count }})</h4>
+    {%- for address in customer.addresses -%}
+      <div class="order-row" style="grid-template-columns: 1fr auto auto;">
+        <span style="font-size:14px; line-height:1.7;">
+          {{ address.first_name }} {{ address.last_name }}{% if address == customer.default_address %} <span class="order-status" style="margin-left:8px">default</span>{% endif %}<br>
+          <span class="muted">{{ address.address1 }}{% if address.address2 != blank %}, {{ address.address2 }}{% endif %} · {{ address.city }} {{ address.zip }} · {{ address.country }}</span>
+        </span>
+        <span>
+          {%- form 'customer_address', address -%}
+            <button class="linklike small" type="button" onclick="var f=document.getElementById('edit-{{ address.id }}'); f.style.display = f.style.display==='none'?'block':'none'">edit</button>
+          {%- endform -%}
+        </span>
+        <span>
+          <form method="post" action="/account/addresses/{{ address.id }}" onsubmit="return confirm('delete this address?')">
+            <input type="hidden" name="_method" value="delete">
+            <button class="linklike small" type="submit">delete</button>
+          </form>
+        </span>
+      </div>
+      <div id="edit-{{ address.id }}" style="display:none; padding: 24px 0 40px;">
+        {%- form 'customer_address', address, class: 'form-grid' -%}
+          <div class="form-field"><label class="form-label">first name</label><input class="form-input" type="text" name="address[first_name]" value="{{ address.first_name }}"></div>
+          <div class="form-field"><label class="form-label">last name</label><input class="form-input" type="text" name="address[last_name]" value="{{ address.last_name }}"></div>
+          <div class="form-field full"><label class="form-label">address</label><input class="form-input" type="text" name="address[address1]" value="{{ address.address1 }}"></div>
+          <div class="form-field"><label class="form-label">city</label><input class="form-input" type="text" name="address[city]" value="{{ address.city }}"></div>
+          <div class="form-field"><label class="form-label">postal / zip</label><input class="form-input" type="text" name="address[zip]" value="{{ address.zip }}"></div>
+          <div class="form-field"><label class="form-label">country</label>
+            <select class="form-input" name="address[country]" data-default="{{ address.country }}">{{ country_option_tags }}</select>
+          </div>
+          <div class="form-field"><label class="form-label">phone</label><input class="form-input" type="tel" name="address[phone]" value="{{ address.phone }}"></div>
+          <div class="full"><button class="btn-fill" type="submit">update address</button></div>
+        {%- endform -%}
+      </div>
+    {%- else -%}
+      <p class="muted" style="font-size:14px; padding:16px 0;">no addresses saved yet.</p>
+    {%- endfor -%}
+  </div>
+</div>
+
+<script>
+  // preselect country dropdowns
+  document.addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('select[data-default]').forEach(function (s) {
+      var v = s.getAttribute('data-default');
+      if (v) for (var i = 0; i < s.options.length; i++) if (s.options[i].value === v) { s.selectedIndex = i; break; }
+    });
+  });
+</script>

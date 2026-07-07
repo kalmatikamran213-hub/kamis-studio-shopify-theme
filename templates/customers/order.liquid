@@ -1,0 +1,49 @@
+<div class="page-wrap">
+  <span class="page-eyebrow"><a class="linklike" href="{{ routes.account_url }}">← account</a></span>
+  <h1 class="page-title">order {{ order.name }}</h1>
+  <p class="page-intro">{{ order.created_at | date: '%B %d, %Y' }} · {{ order.financial_status_label | downcase }}{% if order.fulfillment_status_label %} · {{ order.fulfillment_status_label | downcase }}{% endif %}</p>
+
+  <div class="co-layout" style="margin-top:40px">
+    <div class="ac-section">
+      <h4>items</h4>
+      {%- for line_item in order.line_items -%}
+        <div class="order-row" style="grid-template-columns: 64px 1fr auto;">
+          <span>
+            {%- if line_item.image -%}
+              <img src="{{ line_item.image | image_url: width: 128 }}" alt="{{ line_item.title | escape }}" style="width:56px; height:68px; object-fit:cover; display:block; background:var(--card);">
+            {%- endif -%}
+          </span>
+          <span>
+            {{ line_item.product.title | default: line_item.title | downcase }}<br>
+            <span class="muted small">{% unless line_item.variant.title contains 'Default' %}{{ line_item.variant.title | downcase }} · {% endunless %}qty {{ line_item.quantity }}</span>
+          </span>
+          <span>{{ line_item.final_line_price | money }}</span>
+        </div>
+      {%- endfor -%}
+    </div>
+
+    <div class="co-summary">
+      <h4>summary</h4>
+      <div class="co-line"><span>subtotal</span><span>{{ order.line_items_subtotal_price | money }}</span></div>
+      {%- for shipping_method in order.shipping_methods -%}
+        <div class="co-line"><span>shipping ({{ shipping_method.title | downcase }})</span><span>{{ shipping_method.price | money }}</span></div>
+      {%- endfor -%}
+      {%- for tax_line in order.tax_lines -%}
+        <div class="co-line"><span>{{ tax_line.title | downcase }}</span><span>{{ tax_line.price | money }}</span></div>
+      {%- endfor -%}
+      {%- if order.total_discounts > 0 -%}
+        <div class="co-line"><span>discount</span><span>−{{ order.total_discounts | money }}</span></div>
+      {%- endif -%}
+      <div class="co-line total"><span>total</span><span>{{ order.total_price | money }}</span></div>
+
+      {%- if order.shipping_address -%}
+        <h4 style="margin-top:8px">shipping address</h4>
+        <p style="font-size:13px; line-height:1.7; margin:0;">
+          {{ order.shipping_address.first_name }} {{ order.shipping_address.last_name }}<br>
+          {{ order.shipping_address.address1 }}<br>
+          {{ order.shipping_address.city }} {{ order.shipping_address.zip }}, {{ order.shipping_address.country }}
+        </p>
+      {%- endif -%}
+    </div>
+  </div>
+</div>

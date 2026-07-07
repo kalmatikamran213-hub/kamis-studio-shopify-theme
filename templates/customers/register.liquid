@@ -1,0 +1,31 @@
+<div class="page-wrap narrow">
+  <span class="page-eyebrow">account</span>
+  <h1 class="page-title">create account</h1>
+  <p class="page-intro">members get first access to every drop.</p>
+
+  {%- form 'create_customer', class: 'form-grid', novalidate: 'novalidate' -%}
+    {%- if form.errors -%}
+      <p class="form-message full">{{ form.errors | default_errors }}</p>
+    {%- endif -%}
+    <div class="form-field">
+      <label class="form-label" for="reg-first">first name</label>
+      <input class="form-input" type="text" name="customer[first_name]" id="reg-first" autocomplete="given-name">
+    </div>
+    <div class="form-field">
+      <label class="form-label" for="reg-last">last name</label>
+      <input class="form-input" type="text" name="customer[last_name]" id="reg-last" autocomplete="family-name">
+    </div>
+    <div class="form-field full">
+      <label class="form-label" for="reg-email">email</label>
+      <input class="form-input" type="email" name="customer[email]" id="reg-email" autocomplete="email" required>
+    </div>
+    <div class="form-field full">
+      <label class="form-label" for="reg-password">password</label>
+      <input class="form-input" type="password" name="customer[password]" id="reg-password" autocomplete="new-password" required>
+    </div>
+    <div class="full" style="display:flex; gap:16px; align-items:center;">
+      <button class="btn-fill" type="submit">create account</button>
+      <a class="linklike" href="{{ routes.account_login_url }}">already a member? sign in</a>
+    </div>
+  {%- endform -%}
+</div>

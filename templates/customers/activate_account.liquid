@@ -1,0 +1,23 @@
+<div class="page-wrap narrow">
+  <span class="page-eyebrow">account</span>
+  <h1 class="page-title">activate account</h1>
+  <p class="page-intro">set a password to activate your kamis:studio membership.</p>
+
+  {%- form 'activate_customer_password', class: 'form-grid' -%}
+    {%- if form.errors -%}
+      <p class="form-message full">{{ form.errors | default_errors }}</p>
+    {%- endif -%}
+    <div class="form-field full">
+      <label class="form-label" for="act-password">password</label>
+      <input class="form-input" type="password" name="customer[password]" id="act-password" autocomplete="new-password" required>
+    </div>
+    <div class="form-field full">
+      <label class="form-label" for="act-password-confirm">confirm password</label>
+      <input class="form-input" type="password" name="customer[password_confirmation]" id="act-password-confirm" autocomplete="new-password" required>
+    </div>
+    <div class="full" style="display:flex; gap:12px;">
+      <button class="btn-fill" type="submit">activate account</button>
+      <button class="btn-outline dark" type="submit" name="decline">decline invitation</button>
+    </div>
+  {%- endform -%}
+</div>

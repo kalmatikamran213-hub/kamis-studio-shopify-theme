@@ -1,0 +1,43 @@
+{%- layout none -%}
+<!doctype html>
+<html lang="{{ request.locale.iso_code }}">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ 'gift card' }} · {{ shop.name }}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  {{ 'theme.css' | asset_url | stylesheet_tag }}
+  <style>
+    :root { --bg:#FFFFFF; --fg:#0A0A0A; --muted:#8A8A8A; --accent:#7A1F22; --rule:#E6E6E6; --card:#F5F5F5; }
+    .gc-wrap { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px 20px; gap: 32px; text-align: center; }
+    .gc-card { width: min(420px, 92vw); background: #0A0A0A; color: #F4F2ED; padding: 40px 32px; display: flex; flex-direction: column; gap: 24px; }
+    .gc-mark { font-weight: 600; letter-spacing: -0.02em; font-size: 18px; }
+    .gc-mark span { color: #C96F6F; }
+    .gc-amount { font-size: clamp(40px, 8vw, 64px); font-weight: 600; letter-spacing: -0.03em; }
+    .gc-code { font-family: ui-monospace, Menlo, monospace; font-size: 18px; letter-spacing: 0.18em; background: rgba(255,255,255,0.08); padding: 14px 18px; user-select: all; }
+    .gc-note { color: rgba(244,242,237,0.55); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="gc-wrap">
+    <div class="gc-card">
+      <div class="gc-mark">kamis<span>:</span>studio</div>
+      <div class="gc-amount">{{ gift_card.initial_value | money }}</div>
+      <div class="gc-code">{{ gift_card.code | format_code }}</div>
+      {%- if gift_card.enabled == false or gift_card.expired -%}
+        <div class="gc-note">this gift card has expired.</div>
+      {%- elsif gift_card.balance != gift_card.initial_value -%}
+        <div class="gc-note">remaining balance · {{ gift_card.balance | money }}</div>
+      {%- else -%}
+        <div class="gc-note">use this code at checkout · never expires</div>
+      {%- endif -%}
+    </div>
+    <div style="display:flex; gap:16px;">
+      <a class="btn-fill" style="text-decoration:none" href="{{ shop.url }}">shop {{ shop.name | downcase }}</a>
+      <button class="btn-outline dark" type="button" onclick="window.print()">print</button>
+    </div>
+    <p class="muted small">questions? {{ shop.email | default: 'studio@kamis.studio' }}</p>
+  </div>
+</body>
+</html>
