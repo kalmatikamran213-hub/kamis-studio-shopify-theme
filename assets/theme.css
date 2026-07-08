@@ -1388,3 +1388,34 @@ a.order-row:hover .order-id { color: var(--accent); }
   .menu-ov-foot { flex-direction: column; gap: 6px; align-items: flex-start; }
   .search-ov-head { flex-wrap: wrap; }
 }
+
+/* =========================================================
+   about:blank reference polish — cards + PDP
+   ========================================================= */
+.card-name { font-weight: 600; }
+
+/* related products heading — centered like the reference */
+.stl-h { text-align: center; font-size: 17px; font-weight: 500; letter-spacing: -0.01em; padding: 36px 0 28px; margin: 0; }
+
+/* PDP thumbnails (switch/scroll the gallery) */
+.pdp-thumbs { display: flex; gap: 8px; margin: 2px 0 4px; flex-wrap: wrap; }
+.pdp-thumb { width: 52px; height: 64px; padding: 0; border: 1px solid var(--rule); background: var(--card); cursor: pointer; transition: border-color 160ms; }
+.pdp-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pdp-thumb.is-active { border-color: var(--fg); }
+.pdp-thumb:hover { border-color: var(--muted); }
+
+/* PDP horizontal accordion — "+ details · size & fit · shipping" */
+.acc-h-row { display: flex; gap: 28px; align-items: center; border-top: 1px solid var(--rule); padding-top: 20px; margin-top: 8px; flex-wrap: wrap; }
+.acc-tab-h { background: none; border: 0; font: inherit; font-size: 14px; cursor: pointer; color: var(--fg); display: inline-flex; gap: 8px; align-items: center; padding: 0; }
+.acc-tab-h .acc-icon { font-size: 15px; line-height: 1; }
+.acc-tab-h:hover, .acc-tab-h.is-open { color: var(--accent); }
+.acc-panels { padding: 0; }
+.acc-panel { display: none; padding: 16px 0 4px; font-size: 13px; color: var(--muted); line-height: 1.65; }
+.acc-panel.open { display: block; }
+
+@media (max-width: 768px) {
+  .acc-h-row { gap: 18px; }
+  .pdp-thumb { width: 46px; height: 56px; }
+}
+/* related section is full-bleed under a centered heading */
+.stl { padding: 40px 0 0; }

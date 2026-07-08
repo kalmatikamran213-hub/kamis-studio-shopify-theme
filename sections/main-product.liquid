@@ -16,7 +16,7 @@
 <div class="product-root" data-product data-require-size="{% if size_option %}true{% else %}false{% endif %}">
 
   <div class="pdp">
-    <div class="pdp-left">
+    <div class="pdp-left" data-pdp-gallery>
       <button type="button" class="pdp-bookmark" aria-label="save"
               onclick="this.classList.toggle('is-saved');var p=this.querySelector('path');if(p){p.setAttribute('fill', this.classList.contains('is-saved')?'#0A0A0A':'none')}">
         {% render 'icon-bookmark' %}
@@ -24,15 +24,15 @@
 
       {%- if images.size > 0 -%}
         {%- for img in images limit: 6 -%}
-          <div class="pdp-img-wrap">
+          <div class="pdp-img-wrap" data-gallery-index="{{ forloop.index0 }}">
             <img src="{{ img | image_url: width: 1200 }}" alt="{{ product.title | escape }} · {{ forloop.index }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
           </div>
         {%- endfor -%}
       {%- else -%}
         {%- assign palette_bgs = 'EFEDE8,E6E8EB,EAE6DC,F2EFE8' | split: ',' -%}
-        {%- for i in (1..4) -%}
+        {%- for i in (1..2) -%}
           <div class="pdp-img-wrap">
-            {% render 'striped-placeholder', label: 'product · ' append: product.title, sub: 'image ' append: forloop.index, bg: '#' append: palette_bgs[forloop.index0], fg: '#D5D0C5', class: '' %}
+            {% render 'striped-placeholder', label: product.title, sub: 'image', bg: '#EFEDE8', fg: '#D5D0C5' %}
           </div>
         {%- endfor -%}
       {%- endif -%}
@@ -44,6 +44,16 @@
           <h1 class="pdp-name">{{ product.title | downcase }}</h1>
           <div class="pdp-price" data-product-price>{{ current_variant.price | money }}</div>
         </div>
+
+        {%- if images.size > 1 -%}
+          <div class="pdp-thumbs" data-pdp-thumbs>
+            {%- for img in images limit: 6 -%}
+              <button type="button" class="pdp-thumb{% if forloop.first %} is-active{% endif %}" data-thumb="{{ forloop.index0 }}" aria-label="image {{ forloop.index }}">
+                <img src="{{ img | image_url: width: 140 }}" alt="">
+              </button>
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
 
         {%- if color_option -%}
           <div class="pdp-block">
@@ -62,14 +72,10 @@
           </div>
         {%- endif -%}
 
-        {%- if product.metafields.kamis.fit != blank -%}
-          <div class="pdp-fit">
-            <div>{{ product.metafields.kamis.fit }}</div>
-            {%- if product.metafields.kamis.size_guide_url != blank -%}
-              <a class="linklike size-guide" href="{{ product.metafields.kamis.size_guide_url }}">{{ 'products.product.size_guide' | t }}</a>
-            {%- endif -%}
-          </div>
-        {%- endif -%}
+        <div class="pdp-fit">
+          <div>{{ product.metafields.kamis.fit | default: "model is 6'1 / 1.86m and wears a medium" }}</div>
+          <a class="linklike size-guide" href="{{ product.metafields.kamis.size_guide_url | default: '#' }}">↔ {{ 'products.product.size_guide' | t }}</a>
+        </div>
 
         {%- if size_option -%}
           <div class="pdp-sizes">
@@ -102,30 +108,18 @@
           </button>
         </form>
 
-        <p class="pdp-desc">{{ product.metafields.kamis.short_description | default: product.description | strip_html | truncate: 240 }}</p>
+        <p class="pdp-desc">{{ product.metafields.kamis.short_description | default: product.description | strip_html | truncate: 380 }}</p>
 
-        <div class="acc">
-          <div class="acc-row">
-            <button type="button" class="acc-h" aria-expanded="false">
-              <span class="acc-icon">+</span>
-              <span>{{ 'products.product.details' | t }}</span>
-            </button>
-            <div class="acc-body"><div class="acc-inner">{{ product.metafields.kamis.details | default: product.description }}</div></div>
-          </div>
-          <div class="acc-row">
-            <button type="button" class="acc-h" aria-expanded="false">
-              <span class="acc-icon">+</span>
-              <span>{{ 'products.product.size_and_fit' | t }}</span>
-            </button>
-            <div class="acc-body"><div class="acc-inner">{{ product.metafields.kamis.size_and_fit | default: 'true to size. model is 6&#39;1 / 1.86m and wears a medium.' }}</div></div>
-          </div>
-          <div class="acc-row">
-            <button type="button" class="acc-h" aria-expanded="false">
-              <span class="acc-icon">+</span>
-              <span>{{ 'products.product.shipping' | t }}</span>
-            </button>
-            <div class="acc-body"><div class="acc-inner">{{ product.metafields.kamis.shipping | default: 'orders dispatched within 3–5 working days. free delivery on orders over rs.25,000. returns accepted within 14 days.' }}</div></div>
-          </div>
+        {%- comment -%} horizontal accordion — like the reference: + details · size & fit · shipping {%- endcomment -%}
+        <div class="acc-h-row" data-acc-row>
+          <button type="button" class="acc-tab-h is-first" data-acc="details"><span class="acc-icon">+</span> {{ 'products.product.details' | t }}</button>
+          <button type="button" class="acc-tab-h" data-acc="fit">{{ 'products.product.size_and_fit' | t }}</button>
+          <button type="button" class="acc-tab-h" data-acc="shipping">{{ 'products.product.shipping' | t }}</button>
+        </div>
+        <div class="acc-panels">
+          <div class="acc-panel" data-acc-panel="details">{{ product.metafields.kamis.details | default: product.description }}</div>
+          <div class="acc-panel" data-acc-panel="fit">{{ product.metafields.kamis.size_and_fit | default: 'true to size. model is 6&#39;1 / 1.86m and wears a medium.' }}</div>
+          <div class="acc-panel" data-acc-panel="shipping">{{ product.metafields.kamis.shipping | default: 'orders dispatched within 3–5 working days. free delivery on orders over rs.25,000. returns accepted within 14 days.' }}</div>
         </div>
 
         <div class="pdp-foot muted small">

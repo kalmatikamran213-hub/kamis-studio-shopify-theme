@@ -272,6 +272,30 @@
     if (closer) closer.addEventListener('click', function () { anno.style.display = 'none'; try { localStorage.setItem(key, '1'); } catch (e) {} });
   }
 
+  /* ---------- PDP thumbnails → scroll gallery ---------- */
+  document.addEventListener('click', function (e) {
+    var th = e.target.closest('.pdp-thumb'); if (!th) return;
+    var idx = th.getAttribute('data-thumb');
+    var target = $('[data-gallery-index="' + idx + '"]');
+    $$('.pdp-thumb').forEach(function (b) { b.classList.toggle('is-active', b === th); });
+    if (target) {
+      var navH = 96;
+      var y = target.getBoundingClientRect().top + window.scrollY - navH;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  });
+
+  /* ---------- PDP horizontal accordion ---------- */
+  document.addEventListener('click', function (e) {
+    var tab = e.target.closest('.acc-tab-h'); if (!tab) return;
+    var key = tab.getAttribute('data-acc');
+    var panel = $('[data-acc-panel="' + key + '"]');
+    var isOpen = panel && panel.classList.contains('open');
+    $$('.acc-panel').forEach(function (p) { p.classList.remove('open'); });
+    $$('.acc-tab-h').forEach(function (t) { t.classList.remove('is-open'); });
+    if (panel && !isOpen) { panel.classList.add('open'); tab.classList.add('is-open'); }
+  });
+
   /* ---------- accordions (PDP + FAQ) ---------- */
   document.addEventListener('click', function (e) {
     var h = e.target.closest('.acc-h, .faq-h'); if (!h) return;
