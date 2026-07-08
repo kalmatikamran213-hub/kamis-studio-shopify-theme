@@ -6,6 +6,9 @@
   elsif product != blank
     assign related_products = product.collections.first.products
   endif
+  if related_products == empty or related_products.size < 2
+    assign related_products = collections['all'].products
+  endif
 -%}
 <section class="stl">
   <h2 class="stl-h sfx-reveal" data-reveal>{{ section.settings.heading | default: 'shop the look' }}</h2>

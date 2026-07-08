@@ -1,6 +1,10 @@
 {%- liquid
   assign collection = collections[section.settings.collection]
+  if collection == blank or collection.products.size == 0
+    assign collection = collections['all']
+  endif
   assign limit = section.settings.limit | default: 4
+  assign offset = section.settings.offset | default: 0
 -%}
 <section class="section" id="section-{{ section.id }}">
   <div class="pg-wrap">
@@ -16,11 +20,19 @@
 
     <div class="pg-grid">
       {%- if collection != blank and collection.products.size > 0 -%}
-        {%- for product in collection.products limit: limit -%}
+        {%- for product in collection.products limit: limit offset: offset -%}
           <div class="pg-item" style="--i: {{ forloop.index0 }}">
             {% render 'product-card', product: product %}
           </div>
         {%- endfor -%}
+        {%- comment -%} if offset ran past the end, wrap to the start {%- endcomment -%}
+        {%- if offset >= collection.products.size -%}
+          {%- for product in collection.products limit: limit -%}
+            <div class="pg-item" style="--i: {{ forloop.index0 }}">
+              {% render 'product-card', product: product %}
+            </div>
+          {%- endfor -%}
+        {%- endif -%}
       {%- else -%}
         {%- assign tints = section.settings.placeholder_palette | default: '#EFEDE8,#EAE6DC,#E6E8EB,#F2EFE8' | split: ',' -%}
         {%- for i in (1..limit) -%}
@@ -41,8 +53,11 @@
   "name": "Product grid",
   "settings": [
     { "type": "header", "content": "Source" },
-    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "collection", "id": "collection", "label": "Collection",
+      "info": "Leave empty to automatically show products from your whole catalog." },
     { "type": "range", "id": "limit", "label": "Number of products", "min": 4, "max": 12, "step": 4, "default": 4 },
+    { "type": "range", "id": "offset", "label": "Skip first N products", "min": 0, "max": 24, "step": 4, "default": 0,
+      "info": "Use different values on each row so rows show different products when no collection is picked." },
     { "type": "header", "content": "Heading" },
     { "type": "text", "id": "label", "label": "Label (left)" },
     { "type": "text", "id": "sub",   "label": "Sub (muted)" },

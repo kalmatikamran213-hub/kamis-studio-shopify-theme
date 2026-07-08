@@ -30,6 +30,7 @@
       "settings": {
         "collection": "",
         "limit": 8,
+        "offset": 0,
         "label": "new:in",
         "sub": "drop:one · 4 pieces",
         "cta": "",
@@ -57,6 +58,7 @@
       "settings": {
         "collection": "",
         "limit": 4,
+        "offset": 4,
         "label": "hoodies",
         "sub": "drop:one · the 2.0",
         "cta": "shop:now",
@@ -84,6 +86,7 @@
       "settings": {
         "collection": "",
         "limit": 8,
+        "offset": 8,
         "label": "legwear",
         "sub": "tailored wide leg · 4 colours",
         "cta": "shop:now",
@@ -111,6 +114,7 @@
       "settings": {
         "collection": "",
         "limit": 8,
+        "offset": 12,
         "label": "headwear",
         "sub": "bespoke · best sellers",
         "cta": "shop:now",
