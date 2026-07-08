@@ -74,7 +74,7 @@
 
         <div class="pdp-fit">
           <div>{{ product.metafields.kamis.fit | default: "model is 6'1 / 1.86m and wears a medium" }}</div>
-          <a class="linklike size-guide" href="{{ product.metafields.kamis.size_guide_url | default: '#' }}">↔ {{ 'products.product.size_guide' | t }}</a>
+          <button type="button" class="linklike size-guide" data-size-guide-open>↔ {{ 'products.product.size_guide' | t }}</button>
         </div>
 
         {%- if size_option -%}
@@ -127,6 +127,30 @@
           <span>made in limited quantity</span>
         </div>
       </div>
+    </div>
+  </div>
+
+  {%- comment -%} size guide modal — from the design's product.html {%- endcomment -%}
+  <div class="modal-ov" data-size-guide hidden>
+    <div class="modal">
+      <header style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:14px; font-weight:500; text-transform:lowercase;">{{ 'products.product.size_guide' | t }}</span>
+        <button type="button" class="menu-close dark" data-size-guide-close aria-label="close">close ×</button>
+      </header>
+      <table class="size-table">
+        <thead>
+          <tr><th>size</th><th>chest (cm)</th><th>length (cm)</th><th>sleeve (cm)</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>XS</td><td>102</td><td>66</td><td>58</td></tr>
+          <tr><td>S</td><td>108</td><td>68</td><td>60</td></tr>
+          <tr><td>M</td><td>114</td><td>70</td><td>62</td></tr>
+          <tr><td>L</td><td>120</td><td>72</td><td>64</td></tr>
+          <tr><td>XL</td><td>126</td><td>74</td><td>66</td></tr>
+          <tr><td>XXL</td><td>132</td><td>76</td><td>68</td></tr>
+        </tbody>
+      </table>
+      <p class="muted small" style="margin:0">{{ product.metafields.kamis.size_and_fit | default: "true to size. model is 6'1 / 1.86m and wears a medium." }}</p>
     </div>
   </div>
 

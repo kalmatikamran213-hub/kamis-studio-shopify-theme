@@ -285,6 +285,14 @@
     }
   });
 
+  /* ---------- PDP size guide modal ---------- */
+  document.addEventListener('click', function (e) {
+    var m = $('[data-size-guide]');
+    if (!m) return;
+    if (e.target.closest('[data-size-guide-open]')) { m.hidden = false; lock(); }
+    else if (e.target.closest('[data-size-guide-close]') || e.target === m) { if (!m.hidden) { m.hidden = true; unlock(); } }
+  });
+
   /* ---------- PDP horizontal accordion ---------- */
   document.addEventListener('click', function (e) {
     var tab = e.target.closest('.acc-tab-h'); if (!tab) return;
