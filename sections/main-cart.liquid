@@ -1,61 +1,96 @@
 {%- comment -%}
-  Standard cart page. Most users use the drawer; this is the fallback at /cart.
+  Cart page — two-column layout: items left, sticky order summary right.
+  Quantities post through Shopify's cart form; checkout button submits
+  name="checkout" (Shopify's official checkout flow).
 {%- endcomment -%}
-<div class="shop-root" style="padding-top: calc(32px + 56px + 24px); padding-left: var(--pad-x); padding-right: var(--pad-x); padding-bottom: 64px; max-width: 880px; margin: 0 auto;">
-  <h1 style="font-size: clamp(22px, 2.4vw, 34px); font-weight: 500; letter-spacing: -0.025em; margin: 0 0 32px;">bag</h1>
+{%- assign threshold = settings.free_shipping_threshold | default: 25000 | times: 100 -%}
+<div class="page-wrap">
+  <span class="page-eyebrow">bag · {{ cart.item_count }} item{% if cart.item_count != 1 %}s{% endif %}</span>
+  <h1 class="page-title">your bag</h1>
 
   {%- if cart.item_count == 0 -%}
-    <div class="empty">
+    <div class="empty" style="padding: 48px 0;">
       <p>your bag is empty.</p>
       <p class="muted">drop:one of spring:summer '26 is now live.</p>
-      <a class="btn-outline dark" style="text-decoration:none; margin-top: 18px" href="/collections/all">see:more</a>
+      <a class="btn-outline dark" style="text-decoration:none; margin-top: 18px" href="{{ routes.all_products_collection_url }}">shop drop:one</a>
     </div>
   {%- else -%}
-    <form action="{{ routes.cart_url }}" method="post" novalidate>
-      <ul class="bag-list" style="border-top: 1px solid var(--rule);">
-        {%- for item in cart.items -%}
-          <li class="bag-item" style="padding: 16px 0; border-bottom: 1px solid var(--rule);" data-line="{{ forloop.index }}">
-            <a href="{{ item.url }}">
-              {%- if item.image -%}
-                <img src="{{ item.image | image_url: width: 200 }}" alt="{{ item.product.title | escape }}">
-              {%- else -%}
-                {% render 'striped-placeholder', label: item.product.title, sub: 'image', class: '' %}
-              {%- endif -%}
-            </a>
-            <div class="bag-meta">
-              <a href="{{ item.url }}" style="color:inherit; text-decoration:none"><div class="bag-name">{{ item.product.title | downcase }}</div></a>
-              <div class="bag-variant">{{ item.variant.title | downcase }}</div>
-              <div class="bag-price">{{ item.final_line_price | money }}</div>
-              <div class="qty" style="margin-top:8px">
-                <button type="button" data-qty="dec" aria-label="decrease">−</button>
-                <input name="updates[]" value="{{ item.quantity }}" type="number" min="0">
-                <button type="button" data-qty="inc" aria-label="increase">+</button>
-              </div>
+    <form action="{{ routes.cart_url }}" method="post" id="cart-page-form" novalidate>
+      <div class="co-layout" style="margin-top: 32px;">
+
+        <div>
+          {%- assign to_free = threshold | minus: cart.total_price -%}
+          <div class="ship-progress" style="margin-bottom: 20px;">
+            {%- if to_free > 0 -%}
+              <span class="small">add {{ to_free | money }} for free shipping</span>
+            {%- else -%}
+              <span class="small">✓ free shipping unlocked</span>
+            {%- endif -%}
+            <div class="ship-bar">
+              {%- assign pct = cart.total_price | times: 100.0 | divided_by: threshold -%}
+              <div class="ship-fill" style="width: {% if pct > 100 %}100{% else %}{{ pct }}{% endif %}%"></div>
             </div>
-            <button type="button" class="linklike small" data-remove>{{ 'cart.general.remove' | t }}</button>
-          </li>
-        {%- endfor -%}
-      </ul>
-      <div class="bag-foot" style="margin-top: 24px">
-        <div class="bag-sub" style="font-size: 16px"><span>{{ 'cart.general.subtotal' | t }}</span><span>{{ cart.total_price | money }}</span></div>
-        <div style="display:flex; gap:12px; margin-top: 12px;">
-          <button class="btn-outline dark" type="submit" name="update" style="flex:1">update bag</button>
-          <button class="btn-fill" type="submit" name="checkout" style="flex:2">{{ 'cart.general.checkout' | t }}</button>
+          </div>
+
+          <ul class="bag-list" style="border-top: 1px solid var(--rule); margin:0; padding:0;">
+            {%- for item in cart.items -%}
+              <li class="bag-item" style="padding: 18px 0; border-bottom: 1px solid var(--rule);">
+                <a href="{{ item.url }}">
+                  {%- if item.image -%}
+                    <img src="{{ item.image | image_url: width: 200 }}" alt="{{ item.product.title | escape }}">
+                  {%- else -%}
+                    {% render 'striped-placeholder', label: item.product.title, sub: 'image' %}
+                  {%- endif -%}
+                </a>
+                <div class="bag-meta">
+                  <a href="{{ item.url }}" style="color:inherit; text-decoration:none"><div class="bag-name">{{ item.product.title | downcase }}</div></a>
+                  <div class="bag-variant">{% unless item.variant.title contains 'Default' %}{{ item.variant.title | downcase }}{% endunless %}</div>
+                  <div class="bag-price">{{ item.final_line_price | money }}</div>
+                  <div class="qty" style="margin-top: 8px">
+                    <button type="button" data-qty="dec" aria-label="decrease">−</button>
+                    <input name="updates[]" value="{{ item.quantity }}" type="number" min="0" aria-label="quantity">
+                    <button type="button" data-qty="inc" aria-label="increase">+</button>
+                  </div>
+                </div>
+                <button type="button" class="linklike small" data-remove>{{ 'cart.general.remove' | t }}</button>
+              </li>
+            {%- endfor -%}
+          </ul>
+
+          {%- if section.settings.show_note -%}
+            <div style="margin-top: 24px;">
+              <label class="form-label" for="cart-note">order note</label>
+              <textarea class="form-input" id="cart-note" name="note" rows="3"
+                        placeholder="anything we should know?">{{ cart.note }}</textarea>
+            </div>
+          {%- endif -%}
         </div>
-        <p class="muted small">{{ 'cart.general.shipping_note' | t }}</p>
+
+        <aside class="co-summary">
+          <h4>order summary</h4>
+          <div class="co-line"><span>subtotal</span><span>{{ cart.total_price | money }}</span></div>
+          <div class="co-line"><span>shipping</span><span>{% if to_free <= 0 %}free{% else %}at checkout{% endif %}</span></div>
+          {%- if cart.total_discount > 0 -%}
+            <div class="co-line"><span>discount</span><span>−{{ cart.total_discount | money }}</span></div>
+          {%- endif -%}
+          <div class="co-line total"><span>total</span><span>{{ cart.total_price | money }}</span></div>
+          <button class="btn-fill" type="submit" name="checkout" style="width:100%">{{ 'cart.general.checkout' | t }}</button>
+          <button class="btn-outline dark" type="submit" name="update" style="width:100%">update bag</button>
+          <p class="muted small" style="margin:0">{{ 'cart.general.shipping_note' | t }}</p>
+          <p class="muted small" style="margin:0">secure checkout · powered by shopify</p>
+        </aside>
+
       </div>
     </form>
 
     <script>
-      // page-local qty / remove — posts through the cart form
-      // (capture phase so the drawer's Ajax handlers don't double-fire)
       (function () {
-        var form = document.querySelector('.template-cart form[action*="cart"], form[action="{{ routes.cart_url }}"]');
+        var form = document.getElementById('cart-page-form');
         if (!form) return;
         form.addEventListener('click', function (e) {
           var dec = e.target.closest('[data-qty="dec"]');
           var inc = e.target.closest('[data-qty="inc"]');
-          var rm = e.target.closest('[data-remove]');
+          var rm  = e.target.closest('[data-remove]');
           if (!dec && !inc && !rm) return;
           e.preventDefault(); e.stopPropagation();
           var item = e.target.closest('.bag-item');
@@ -74,6 +109,9 @@
 
 {% schema %}
 {
-  "name": "Cart"
+  "name": "Cart",
+  "settings": [
+    { "type": "checkbox", "id": "show_note", "label": "Show order note field", "default": true }
+  ]
 }
 {% endschema %}

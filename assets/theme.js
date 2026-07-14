@@ -403,6 +403,54 @@
     ptick();
   }
 
+  /* ---------- sticky add-to-bag (mobile PDP) ---------- */
+  (function () {
+    var bar = $('[data-sticky-atb]');
+    if (!bar) return;
+    var cta = $('.pdp-cta');
+    var addBtn = bar.querySelector('[data-sticky-add]');
+    if (addBtn) addBtn.addEventListener('click', function () {
+      var f = $('[data-product-form]');
+      if (!f) return;
+      if (f.requestSubmit) f.requestSubmit();
+      else f.dispatchEvent(new Event('submit', { bubbles: true, cancelable: true }));
+    });
+    if ('IntersectionObserver' in window && cta) {
+      new IntersectionObserver(function (en) {
+        bar.hidden = en[0].isIntersecting || window.scrollY < 200;
+      }, { threshold: 0 }).observe(cta);
+    }
+  })();
+
+  /* ---------- recently viewed (localStorage) ---------- */
+  (function () {
+    var KEY = 'kamis:rv';
+    var list = [];
+    try { list = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) {}
+    var cur = null;
+    var dataEl = $('[data-rv-current]');
+    if (dataEl) { try { cur = JSON.parse(dataEl.textContent); } catch (e) {} }
+    if (cur && cur.handle) {
+      list = list.filter(function (x) { return x.handle !== cur.handle; });
+      list.unshift(cur);
+      list = list.slice(0, 9);
+      try { localStorage.setItem(KEY, JSON.stringify(list)); } catch (e) {}
+    }
+    var host = $('[data-recently-viewed]');
+    if (!host) return;
+    var others = list.filter(function (x) { return !cur || x.handle !== cur.handle; }).slice(0, 4);
+    if (!others.length) return;
+    var grid = host.querySelector('[data-rv-grid]');
+    if (!grid) return;
+    grid.innerHTML = others.map(function (it) {
+      return '<a class="rv-card" href="' + it.url + '">' +
+        (it.img ? '<img src="' + it.img + '" alt="" loading="lazy">' : '') +
+        '<span class="rv-name">' + it.title + '</span>' +
+        '<span class="rv-price muted">' + (it.price || '') + '</span></a>';
+    }).join('');
+    host.hidden = false;
+  })();
+
   /* ---------- init ---------- */
   fetchCart();
 })();

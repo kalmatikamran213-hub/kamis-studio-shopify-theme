@@ -19,9 +19,21 @@
         </div>
       </section>
     {%- else -%}
-      <div style="padding: 80px var(--pad-x); text-align: center;">
-        <p class="muted">no results for "{{ search.terms | escape }}".</p>
+      <div style="padding: 64px var(--pad-x) 32px; text-align: center;">
+        <p class="muted">no results for "{{ search.terms | escape }}". try "tee", "hoodie", or "sweatpants".</p>
       </div>
+      {%- if collections['all'].products.size > 0 -%}
+        <section class="stl" style="padding: 0;">
+          <h2 class="stl-h">you might like these</h2>
+          <div class="pg-grid pg-visible" style="border-bottom:1px solid var(--rule)">
+            {%- for p in collections['all'].products limit: 4 -%}
+              <div class="pg-item" style="--i: {{ forloop.index0 }}">
+                {% render 'product-card', product: p %}
+              </div>
+            {%- endfor -%}
+          </div>
+        </section>
+      {%- endif -%}
     {%- endif -%}
   {%- endif -%}
 </div>

@@ -154,6 +154,24 @@
     </div>
   </div>
 
+  {%- comment -%} sticky add-to-bag bar (mobile) {%- endcomment -%}
+  <div class="pdp-sticky-atb" data-sticky-atb hidden>
+    <div class="satb-meta">
+      <span class="satb-name">{{ product.title | downcase }}</span>
+      <span class="satb-price" data-product-price>{{ current_variant.price | money }}</span>
+    </div>
+    <button type="button" class="btn-fill" data-sticky-add>{{ 'products.product.add_to_bag' | t }}</button>
+  </div>
+
+  {%- comment -%} recently viewed (rendered from localStorage by theme.js) {%- endcomment -%}
+  <section class="stl" data-recently-viewed hidden>
+    <h2 class="stl-h">recently viewed</h2>
+    <div class="rv-grid" data-rv-grid></div>
+  </section>
+  <script type="application/json" data-rv-current>
+    {"handle": {{ product.handle | json }}, "title": {{ product.title | downcase | json }}, "url": {{ product.url | json }}, "img": {{ product.featured_image | image_url: width: 400 | json }}, "price": {{ current_variant.price | money | json }}}
+  </script>
+
   <script type="application/json" data-product-json>
     {{ product.variants | json }}
   </script>

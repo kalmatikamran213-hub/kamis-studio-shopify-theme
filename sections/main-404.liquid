@@ -1,9 +1,25 @@
-<div class="shop-root" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height: 70vh; padding: 80px var(--pad-x); text-align:center;">
+<div class="shop-root" style="display:flex; flex-direction:column; align-items:center; justify-content:center; min-height: 52vh; padding: 140px var(--pad-x) 56px; text-align:center;">
   <div class="muted small" style="margin-bottom: 16px">404 · not found</div>
   <h1 style="font-size: clamp(28px, 3vw, 44px); font-weight: 600; letter-spacing: -0.03em; margin: 0 0 24px;">this page does not exist.</h1>
   <p class="muted" style="margin: 0 0 32px;">the page you were looking for has moved or never was.</p>
-  <a class="btn-outline dark" style="text-decoration:none" href="/">back to home</a>
+  <div style="display:flex; gap:12px;">
+    <a class="btn-fill" style="text-decoration:none" href="{{ routes.all_products_collection_url }}">shop drop:one</a>
+    <a class="btn-outline dark" style="text-decoration:none" href="/">back to home</a>
+  </div>
 </div>
+
+{%- if collections['all'].products.size > 0 -%}
+  <section class="stl" style="padding: 24px 0 0;">
+    <h2 class="stl-h">while you're here</h2>
+    <div class="pg-grid pg-visible" style="border-bottom:1px solid var(--rule)">
+      {%- for p in collections['all'].products limit: 4 -%}
+        <div class="pg-item" style="--i: {{ forloop.index0 }}">
+          {% render 'product-card', product: p %}
+        </div>
+      {%- endfor -%}
+    </div>
+  </section>
+{%- endif -%}
 
 {% schema %}
 {
